@@ -28,22 +28,8 @@ class GameScene extends Scene {
         // Ground
         this.platforms = this.physics.add.staticGroup();
         this.platforms.create(width / 2, height - (height / 40), 'ground').setDisplaySize(width, height / 20).refreshBody();
-        // Player
-        this.playerWalk = this.physics.add.sprite(100, 450, 'player-walk');
-        this.playerWalk.setScale(1.5);
-        this.playerWalk.setBounce(0.2);
-        // Player animation
-        this.anims.create({
-            key: 'right',
-            frames: this.anims.generateFrameNumbers('player-walk', { start: 0, end: 7 }),
-            frameRate: 10,
-            repeat: -1
-        });
-        this.anims.create({
-            key: 'still',
-            frames: [{ key: 'player-walk', frame: 3 }],
-            frameRate: 20
-        });
+
+        this.createPlayer();
         // Movement keys
         this.cursors = this.input.keyboard?.addKeys({
             'up': Input.Keyboard.KeyCodes.W,
@@ -74,6 +60,25 @@ class GameScene extends Scene {
             this.playerWalk?.setVelocityX(0);
             this.playerWalk?.anims.play('still', true);
         }
+    }
+
+    private createPlayer() {
+        // PlayerWalk
+        this.playerWalk = this.physics.add.sprite(100, 450, 'player-walk');
+        this.playerWalk.setScale(1.5);
+        this.playerWalk.setBounce(0.2);
+        // Player animation
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('player-walk', { start: 0, end: 7 }),
+            frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'still',
+            frames: [{ key: 'player-walk', frame: 3 }],
+            frameRate: 20
+        });
     }
 }
 
