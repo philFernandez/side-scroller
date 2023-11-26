@@ -5,7 +5,7 @@ const canvas = document.querySelector('canvas#game') as HTMLCanvasElement;
 
 class GameScene extends Scene {
     private platforms: Physics.Arcade.StaticGroup | undefined;
-    private player: Types.Physics.Arcade.SpriteWithDynamicBody | undefined;
+    private playerWalk: Types.Physics.Arcade.SpriteWithDynamicBody | undefined;
     private cursors: Types.Input.Keyboard.CursorKeys | undefined;
 
     constructor() {
@@ -15,7 +15,7 @@ class GameScene extends Scene {
     preload() {
         this.load.image('sky', '/assets/sky.png');
         this.load.image('ground', '/assets/platform.png');
-        this.load.spritesheet('player', '/assets/Raider_1/Run.png', {
+        this.load.spritesheet('player-walk', '/assets/Raider_1/Walk.png', {
             frameWidth: 128,
             frameHeight: 128,
         });
@@ -29,23 +29,22 @@ class GameScene extends Scene {
         this.platforms = this.physics.add.staticGroup();
         this.platforms.create(width / 2, height - (height / 40), 'ground').setDisplaySize(width, height / 20).refreshBody();
         // Player
-        this.player = this.physics.add.sprite(100, 450, 'player');
-        this.player.setScale(1.5);
-        this.player.setBounce(0.2);
+        this.playerWalk = this.physics.add.sprite(100, 450, 'player-walk');
+        this.playerWalk.setScale(1.5);
+        this.playerWalk.setBounce(0.2);
         // Player animation
         this.anims.create({
             key: 'right',
-            frames: this.anims.generateFrameNumbers('player', { start: 0, end: 7 }),
+            frames: this.anims.generateFrameNumbers('player-walk', { start: 0, end: 7 }),
             frameRate: 10,
             repeat: -1
         });
         this.anims.create({
             key: 'still',
-            frames: [{ key: 'player', frame: 3 }],
+            frames: [{ key: 'player-walk', frame: 3 }],
             frameRate: 20
         });
         // Movement keys
-
         this.cursors = this.input.keyboard?.addKeys({
             'up': Input.Keyboard.KeyCodes.W,
             'left': Input.Keyboard.KeyCodes.A,
@@ -56,25 +55,24 @@ class GameScene extends Scene {
         }) as Types.Input.Keyboard.CursorKeys;
 
         // Physics
-        this.physics.add.collider(this.player, this.platforms);
+        this.physics.add.collider(this.playerWalk, this.platforms);
     }
 
     update() {
         if (this.cursors?.right.isDown && this.cursors?.shift.isUp) {
-            this.player?.setBounce(0.2);
-            this.player?.setFlipX(false);
-            this.player?.setVelocityX(160);
-            this.player?.anims.play('right', true);
+            this.playerWalk?.setBounce(0.2);
+            this.playerWalk?.setFlipX(false);
+            this.playerWalk?.setVelocityX(160);
+            this.playerWalk?.anims.play('right', true);
         } else if (this.cursors?.left.isDown && this.cursors?.shift.isUp) {
-            this.player?.setBounce(0.2);
-            this.player?.setFlipX(true);
-            this.player?.setVelocityX(-160);
-            this.player?.anims.play('right', true);
+            this.playerWalk?.setBounce(0.2);
+            this.playerWalk?.setFlipX(true);
+            this.playerWalk?.setVelocityX(-160);
+            this.playerWalk?.anims.play('right', true);
         }
-
         else {
-            this.player?.setVelocityX(0);
-            this.player?.anims.play('still', true);
+            this.playerWalk?.setVelocityX(0);
+            this.playerWalk?.anims.play('still', true);
         }
     }
 }
