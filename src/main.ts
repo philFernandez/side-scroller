@@ -1,4 +1,4 @@
-import { Game, Input, Physics, Scene, Types, WEBGL } from 'phaser';
+import { CANVAS, Game, Input, Physics, Scene, Types, WEBGL } from 'phaser';
 import './style.css';
 
 const canvas = document.querySelector('canvas#game') as HTMLCanvasElement;
@@ -48,6 +48,11 @@ class GameScene extends Scene {
         // Physics
         this.physics.add.collider(this.playerWalk!, this.platforms);
         this.physics.add.collider(this.playerIdle!, this.platforms);
+        this.physics.world.bounds.setTo(0, 0, width * 50, height);
+
+        // Camera 
+        this.cameras.main.setBounds(0, 0, width * 50, height);
+        this.cameras.main.startFollow(this.playerWalk!);
     }
 
     update() {
@@ -121,7 +126,7 @@ class GameScene extends Scene {
 }
 
 const config = {
-    type: WEBGL,
+    type: CANVAS,
     width: document.querySelector('div.container')?.clientWidth,
     height: document.querySelector('div.container')?.clientHeight,
     canvas,
