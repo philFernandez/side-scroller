@@ -5,6 +5,7 @@ const canvas = document.querySelector('canvas#game') as HTMLCanvasElement;
 
 class GameScene extends Scene {
     private sky: GameObjects.TileSprite | undefined;
+    private road: GameObjects.Image | undefined;
     private platforms: Physics.Arcade.StaticGroup | undefined;
     private player: Types.Physics.Arcade.SpriteWithDynamicBody | undefined;
     private cursors: Types.Input.Keyboard.CursorKeys | undefined;
@@ -16,6 +17,7 @@ class GameScene extends Scene {
     preload() {
         this.load.image('sky', '/assets/Level1/sky.png');
         this.load.image('ground', '/assets/platform.png');
+        this.load.image('road', '/assets/Level1/road.png');
         this.load.spritesheet('player-walk', '/assets/Raider_1/Walk.png', {
             frameWidth: 128,
             frameHeight: 128,
@@ -35,8 +37,12 @@ class GameScene extends Scene {
         // Sky
         this.add.image(width / 2, height / 2, 'sky').setScrollFactor(0);
         // Ground
-        this.platforms = this.physics.add.staticGroup();
-        this.platforms.create(width / 2, height - (height / 40), 'ground').setDisplaySize(width * 50, height / 20).refreshBody();
+        // this.platforms = this.physics.add.staticGroup();
+        // this.platforms.create(width / 2, height - (height / 40), 'ground').setDisplaySize(width * 50, height / 20).refreshBody();
+        // Road
+        this.road = this.add.image(width / 2, height / 2, "road");
+
+
 
         this.createPlayer();
         // Movement keys
@@ -50,7 +56,7 @@ class GameScene extends Scene {
         }) as Types.Input.Keyboard.CursorKeys;
 
         // Physics
-        this.physics.add.collider(this.player!, this.platforms);
+        this.physics.add.collider(this.player!, this.road!);
         this.physics.world.bounds.setTo(0, 0, width * 50, height);
 
         // Camera 
@@ -131,7 +137,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 300 },
-            debug: false
+            debug: true
         }
     },
     scene: [
