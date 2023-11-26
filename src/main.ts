@@ -15,10 +15,9 @@ class GameScene extends Scene {
         this.load.image('sky', '/assets/sky.png');
         this.load.image('ground', '/assets/platform.png');
         this.load.spritesheet('player', '/assets/Raider_1/Run.png', {
-            frameWidth: 32,
-            frameHeight: 86,
-            spacing: 84,
-            margin: 42
+            frameWidth: 128,
+            frameHeight: 128,
+            startFrame: 7,
         });
     }
 
@@ -33,6 +32,13 @@ class GameScene extends Scene {
         this.player = this.physics.add.sprite(100, 450, 'player');
         this.player.setScale(1.5);
         this.player.setBounce(0.2);
+        // Player animation
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('player', { start: 3, end: 0 }),
+            frameRate: 10,
+            repeat: -1
+        });
         // Physics
         this.physics.add.collider(this.player, this.platforms);
     }
