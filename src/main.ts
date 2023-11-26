@@ -80,10 +80,12 @@ class GameScene extends Scene {
         this.playerWalk = this.physics.add.sprite(100, 450, 'player-walk');
         this.playerWalk.setScale(1.5);
         this.playerWalk.setBounce(0.2);
+        this.playerWalk.setCollideWorldBounds(true);
         // Player Idle
         this.playerIdle = this.physics.add.sprite(100, 450, 'player-idle');
         this.playerIdle.setScale(1.5);
         this.playerIdle.setBounce(0.2);
+        this.playerIdle.setCollideWorldBounds(true);
         this.playerIdle.visible = false;
         // Player animation
         this.anims.create({
