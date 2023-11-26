@@ -20,6 +20,10 @@ class GameScene extends Scene {
             frameWidth: 128,
             frameHeight: 128,
         });
+        this.load.spritesheet('player-run', '/assets/Raider_1/Run.png', {
+            frameWidth: 128,
+            frameHeight: 128,
+        });
         this.load.spritesheet('player-idle', '/assets/Raider_1/Idle.png', {
             frameWidth: 128,
             frameHeight: 128,
@@ -56,10 +60,18 @@ class GameScene extends Scene {
     }
 
     update() {
-        if (this.cursors?.right.isDown && this.cursors?.shift.isUp) {
+        let walkSpeed = 160;
+        if (this.cursors?.right.isDown) {
             this.player?.setFlipX(false);
-            this.player?.setVelocityX(160);
-            this.player?.anims.play('walk', true);
+
+            if (this.cursors?.shift.isUp) {
+                this.player?.setVelocityX(walkSpeed);
+                this.player?.anims.play('walk', true);
+            } else {
+                this.player?.setVelocityX(walkSpeed * 2);
+                this.player?.anims.play('run', true);
+            }
+
         } else if (this.cursors?.left.isDown && this.cursors?.shift.isUp) {
             this.player?.setFlipX(true);
             this.player?.setVelocityX(-160);
@@ -86,6 +98,12 @@ class GameScene extends Scene {
             key: 'walk',
             frames: this.anims.generateFrameNumbers('player-walk', { start: 0, end: 7 }),
             frameRate: 10,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'run',
+            frames: this.anims.generateFrameNumbers('player-run', { start: 0, end: 7 }),
+            frameRate: 20,
             repeat: -1
         });
         this.anims.create({
