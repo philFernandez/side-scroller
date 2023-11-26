@@ -34,7 +34,7 @@ class GameScene extends Scene {
         this.sky.setDisplaySize(width * 50, height);
         // Ground
         this.platforms = this.physics.add.staticGroup();
-        this.platforms.create(width / 2, height - (height / 40), 'ground').setDisplaySize(width, height / 20).refreshBody();
+        this.platforms.create(width / 2, height - (height / 40), 'ground').setDisplaySize(width * 50, height / 20).refreshBody();
 
         this.createPlayer();
         // Movement keys
