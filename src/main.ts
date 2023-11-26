@@ -6,8 +6,7 @@ const canvas = document.querySelector('canvas#game') as HTMLCanvasElement;
 class GameScene extends Scene {
     private sky: GameObjects.TileSprite | undefined;
     private platforms: Physics.Arcade.StaticGroup | undefined;
-    private playerWalk: Types.Physics.Arcade.SpriteWithDynamicBody | undefined;
-    private playerIdle: Types.Physics.Arcade.SpriteWithDynamicBody | undefined;
+    private player: Types.Physics.Arcade.SpriteWithDynamicBody | undefined;
     private cursors: Types.Input.Keyboard.CursorKeys | undefined;
 
     constructor() {
@@ -48,51 +47,41 @@ class GameScene extends Scene {
         }) as Types.Input.Keyboard.CursorKeys;
 
         // Physics
-        this.physics.add.collider(this.playerWalk!, this.platforms);
-        this.physics.add.collider(this.playerIdle!, this.platforms);
+        this.physics.add.collider(this.player!, this.platforms);
         this.physics.world.bounds.setTo(0, 0, width * 50, height);
 
         // Camera 
         this.cameras.main.setBounds(0, 0, width * 50, height);
-        this.cameras.main.startFollow(this.playerWalk!);
+        this.cameras.main.startFollow(this.player!);
     }
 
     update() {
         if (this.cursors?.right.isDown && this.cursors?.shift.isUp) {
-            this.walk("right");
+            this.player?.setFlipX(false);
+            this.player?.setVelocityX(160);
+            this.player?.anims.play('walk', true);
         } else if (this.cursors?.left.isDown && this.cursors?.shift.isUp) {
-            this.walk("left");
+            this.player?.setFlipX(true);
+            this.player?.setVelocityX(-160);
+            this.player?.anims.play('walk', true);
         } else {
-            // Make walking sprite invisible
-            this.playerWalk!.visible = false;
-            // Make idle sprite visible
-            this.playerIdle!.visible = true;
-            // Make both sprites stop moving
-            this.playerWalk?.setVelocityX(0);
-            this.playerIdle?.setVelocityX(0);
-
-            // Do idle animation
-            this.playerIdle?.anims.play('idle', true);
+            this.player?.setVelocityX(0);
+            this.player?.anims.play('idle', true);
         }
 
-        if (this.cursors?.space.isDown && this.playerWalk?.body.touching.down) {
-            this.jump();
+        if (this.cursors?.space.isDown && this.player?.body.touching.down) {
+            this.player?.setVelocityY(-300);
         }
     }
 
     private createPlayer() {
         // PlayerWalk
-        this.playerWalk = this.physics.add.sprite(100, 450, 'player-walk');
-        this.playerWalk.setScale(1.5);
-        this.playerWalk.setBounce(0.2);
-        this.playerWalk.setCollideWorldBounds(true);
-        // Player Idle
-        this.playerIdle = this.physics.add.sprite(100, 450, 'player-idle');
-        this.playerIdle.setScale(1.5);
-        this.playerIdle.setBounce(0.2);
-        this.playerIdle.setCollideWorldBounds(true);
-        this.playerIdle.visible = false;
-        // Player animation
+        this.player = this.physics.add.sprite(100, 450, 'player-walk');
+        this.player.setScale(1.5);
+        this.player.setBounce(0.2);
+        this.player.setCollideWorldBounds(true);
+
+        // Player animations
         this.anims.create({
             key: 'walk',
             frames: this.anims.generateFrameNumbers('player-walk', { start: 0, end: 7 }),
@@ -105,34 +94,6 @@ class GameScene extends Scene {
             frameRate: 6,
             repeat: -1
         });
-    }
-    private jump() {
-        this.playerWalk?.setVelocityY(-300);
-        this.playerIdle?.setVelocityY(-300);
-    }
-    private walk(direction = "right") {
-
-        if (direction === "right") {
-            this.playerWalk?.setFlipX(false);
-            this.playerIdle?.setFlipX(false);
-            this.playerWalk?.setVelocityX(160);
-            this.playerIdle?.setVelocityX(160);
-        } else {
-            this.playerWalk?.setFlipX(true);
-            this.playerIdle?.setFlipX(true);
-            this.playerWalk?.setVelocityX(-160);
-            this.playerIdle?.setVelocityX(-160);
-        }
-        // Set walk sprite visible
-        this.playerWalk!.visible = true;
-        // Set idle sprite invisible
-        this.playerIdle!.visible = false;
-        // Set attributes on walk sprite
-        this.playerWalk?.setBounce(0.2);
-        // Set attributes on idle sprite
-        this.playerIdle?.setBounce(0.2);
-        // Do walking animation
-        this.playerWalk?.anims.play('walk', true);
     }
 }
 
