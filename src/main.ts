@@ -52,45 +52,21 @@ class GameScene extends Scene {
 
     update() {
         if (this.cursors?.right.isDown && this.cursors?.shift.isUp) {
-
-            // Set walk sprite visible
-            this.playerWalk!.visible = true;
-            // Set idle sprite invisible
-            this.playerIdle!.visible = false;
-
-            // Set attributes on walk sprite
-            this.playerWalk?.setBounce(0.2);
-            this.playerWalk?.setFlipX(false);
-            this.playerWalk?.setVelocityX(160);
-            // Set attributes on idle sprite
-            this.playerIdle?.setBounce(0.2);
-            this.playerIdle?.setFlipX(false);
-            this.playerIdle?.setVelocityX(160);
-
-            // Do walking animation
-            this.playerWalk?.anims.play('walk', true);
-
+            this.walk("right");
         } else if (this.cursors?.left.isDown && this.cursors?.shift.isUp) {
-            this.playerWalk!.visible = true;
-            this.playerIdle!.visible = false;
-
-            // Set attributes on walk sprite
-            this.playerWalk?.setBounce(0.2);
-            this.playerWalk?.setFlipX(true);
-            this.playerWalk?.setVelocityX(-160);
-            // Set attributes on idle sprite
-            this.playerIdle?.setBounce(0.2);
-            this.playerIdle?.setFlipX(true);
-            this.playerIdle?.setVelocityX(-160);
-
-            // Do walking animation
-            this.playerWalk?.anims.play('walk', true);
+            this.walk("left");
         }
         else {
+            // Make walking sprite invisible
+            this.playerWalk!.visible = false;
+            // Make idle sprite visible
+            this.playerIdle!.visible = true;
+            // Make both sprites stop moving
             this.playerWalk?.setVelocityX(0);
             this.playerIdle?.setVelocityX(0);
-            this.playerWalk!.visible = false;
-            this.playerIdle!.visible = true;
+
+            // Do idle animation
+            this.playerIdle?.anims.play('idle', true);
         }
     }
 
@@ -112,10 +88,35 @@ class GameScene extends Scene {
             repeat: -1
         });
         this.anims.create({
-            key: 'still',
-            frames: [{ key: 'player-walk', frame: 3 }],
-            frameRate: 20
+            key: 'idle',
+            frames: this.anims.generateFrameNumbers('player-idle', { start: 0, end: 5 }),
+            frameRate: 6,
+            repeat: -1
         });
+    }
+    private walk(direction = "right") {
+
+        if (direction === "right") {
+            this.playerWalk?.setFlipX(false);
+            this.playerIdle?.setFlipX(false);
+            this.playerWalk?.setVelocityX(160);
+            this.playerIdle?.setVelocityX(160);
+        } else {
+            this.playerWalk?.setFlipX(true);
+            this.playerIdle?.setFlipX(true);
+            this.playerWalk?.setVelocityX(-160);
+            this.playerIdle?.setVelocityX(-160);
+        }
+        // Set walk sprite visible
+        this.playerWalk!.visible = true;
+        // Set idle sprite invisible
+        this.playerIdle!.visible = false;
+        // Set attributes on walk sprite
+        this.playerWalk?.setBounce(0.2);
+        // Set attributes on idle sprite
+        this.playerIdle?.setBounce(0.2);
+        // Do walking animation
+        this.playerWalk?.anims.play('walk', true);
     }
 }
 
