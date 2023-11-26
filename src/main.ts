@@ -1,36 +1,31 @@
-import { Game, GameObjects, Scene, Types, WEBGL } from 'phaser';
+import { Game, GameObjects, Physics, Scene, Types, WEBGL } from 'phaser';
 import './style.css';
 
 const canvas = document.querySelector('canvas#game') as HTMLCanvasElement;
 
 class GameScene extends Scene {
-    private textbox: GameObjects.Text | undefined;
+    private platforms: Physics.Arcade.StaticGroup | undefined;
 
     constructor() {
         super('scene-game');
     }
 
-    create() {
-        this.textbox = this.add.text(
-            window.innerWidth / 2,
-            window.innerHeight / 2,
-            'Welcome to Phaser X Vite!',
-            {
-                color: '#FFF',
-                fontFamily: 'monospace',
-                fontSize: '26px'
-            }
-        );
-
-        this.textbox.setOrigin(0.5, 0.5);
+    preload() {
+        this.load.image('sky', '/assets/sky.png');
+        this.load.image('ground', '/assets/platform.png');
     }
 
-    update(time: number, delta: number) {
-        if (!this.textbox) {
-            return;
-        }
+    create() {
+        let { width, height } = this.sys.game.canvas;
 
-        this.textbox.rotation += 0.0005 * delta;
+        this.add.image(width / 2, height / 2, 'sky').setDisplaySize(width, height);
+
+        this.platforms = this.physics.add.staticGroup();
+
+        this.platforms.create(width / 2, height - (height / 40), 'ground').setDisplaySize(width, height / 20).refreshBody();
+    }
+
+    update() {
     }
 }
 
