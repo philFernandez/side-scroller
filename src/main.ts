@@ -1,4 +1,4 @@
-import { Game, GameObjects, Physics, Scene, Types, WEBGL } from 'phaser';
+import { Game, Input, Physics, Scene, Types, WEBGL } from 'phaser';
 import './style.css';
 
 const canvas = document.querySelector('canvas#game') as HTMLCanvasElement;
@@ -6,6 +6,7 @@ const canvas = document.querySelector('canvas#game') as HTMLCanvasElement;
 class GameScene extends Scene {
     private platforms: Physics.Arcade.StaticGroup | undefined;
     private player: Types.Physics.Arcade.SpriteWithDynamicBody | undefined;
+    private cursors: Types.Input.Keyboard.CursorKeys | undefined;
 
     constructor() {
         super('scene-game');
@@ -17,7 +18,6 @@ class GameScene extends Scene {
         this.load.spritesheet('player', '/assets/Raider_1/Run.png', {
             frameWidth: 128,
             frameHeight: 128,
-            startFrame: 7,
         });
     }
 
@@ -35,15 +35,39 @@ class GameScene extends Scene {
         // Player animation
         this.anims.create({
             key: 'right',
-            frames: this.anims.generateFrameNumbers('player', { start: 3, end: 0 }),
+            frames: this.anims.generateFrameNumbers('player', { start: 0, end: 7 }),
             frameRate: 10,
             repeat: -1
         });
+        this.anims.create({
+            key: 'still',
+            frames: [{ key: 'player', frame: 3 }],
+            frameRate: 20
+        });
+        // Movement keys
+
+        this.cursors = this.input.keyboard?.addKeys({
+            'up': Input.Keyboard.KeyCodes.W,
+            'left': Input.Keyboard.KeyCodes.A,
+            'down': Input.Keyboard.KeyCodes.S,
+            'right': Input.Keyboard.KeyCodes.D,
+            'space': Input.Keyboard.KeyCodes.SPACE,
+            'shift': Input.Keyboard.KeyCodes.SHIFT,
+        }) as Types.Input.Keyboard.CursorKeys;
+
         // Physics
         this.physics.add.collider(this.player, this.platforms);
     }
 
     update() {
+        if (this.cursors?.right.isDown && this.cursors?.shift.isUp) {
+            this.player?.setBounce(0.2);
+            this.player?.setVelocityX(160);
+            this.player?.anims.play('right', true);
+        } else {
+            this.player?.setVelocityX(0);
+            this.player?.anims.play('still', true);
+        }
     }
 }
 
