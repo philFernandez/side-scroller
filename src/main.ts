@@ -1,9 +1,10 @@
-import { CANVAS, Game, Input, Physics, Scene, Types, WEBGL } from 'phaser';
+import { CANVAS, Game, GameObjects, Input, Physics, Scene, Types, WEBGL } from 'phaser';
 import './style.css';
 
 const canvas = document.querySelector('canvas#game') as HTMLCanvasElement;
 
 class GameScene extends Scene {
+    private sky: GameObjects.TileSprite | undefined;
     private platforms: Physics.Arcade.StaticGroup | undefined;
     private playerWalk: Types.Physics.Arcade.SpriteWithDynamicBody | undefined;
     private playerIdle: Types.Physics.Arcade.SpriteWithDynamicBody | undefined;
@@ -29,7 +30,8 @@ class GameScene extends Scene {
     create() {
         let { width, height } = this.sys.game.canvas;
         // Sky
-        this.add.image(width / 2, height / 2, 'sky').setDisplaySize(width, height);
+        this.sky = this.add.tileSprite(width / 2, height / 2, 0, 0, 'sky');
+        this.sky.setDisplaySize(width * 50, height);
         // Ground
         this.platforms = this.physics.add.staticGroup();
         this.platforms.create(width / 2, height - (height / 40), 'ground').setDisplaySize(width, height / 20).refreshBody();
@@ -60,8 +62,7 @@ class GameScene extends Scene {
             this.walk("right");
         } else if (this.cursors?.left.isDown && this.cursors?.shift.isUp) {
             this.walk("left");
-        }
-        else {
+        } else {
             // Make walking sprite invisible
             this.playerWalk!.visible = false;
             // Make idle sprite visible
@@ -72,6 +73,10 @@ class GameScene extends Scene {
 
             // Do idle animation
             this.playerIdle?.anims.play('idle', true);
+        }
+
+        if (this.cursors?.space.isDown && this.playerWalk?.body.touching.down) {
+            this.jump();
         }
     }
 
@@ -100,6 +105,10 @@ class GameScene extends Scene {
             frameRate: 6,
             repeat: -1
         });
+    }
+    private jump() {
+        this.playerWalk?.setVelocityY(-300);
+        this.playerIdle?.setVelocityY(-300);
     }
     private walk(direction = "right") {
 
