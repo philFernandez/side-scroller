@@ -6,6 +6,7 @@ const canvas = document.querySelector('canvas#game') as HTMLCanvasElement;
 class GameScene extends Scene {
     private platforms: Physics.Arcade.StaticGroup | undefined;
     private playerWalk: Types.Physics.Arcade.SpriteWithDynamicBody | undefined;
+    private playerIdle: Types.Physics.Arcade.SpriteWithDynamicBody | undefined;
     private cursors: Types.Input.Keyboard.CursorKeys | undefined;
 
     constructor() {
@@ -16,6 +17,10 @@ class GameScene extends Scene {
         this.load.image('sky', '/assets/sky.png');
         this.load.image('ground', '/assets/platform.png');
         this.load.spritesheet('player-walk', '/assets/Raider_1/Walk.png', {
+            frameWidth: 128,
+            frameHeight: 128,
+        });
+        this.load.spritesheet('player-idle', '/assets/Raider_1/Idle.png', {
             frameWidth: 128,
             frameHeight: 128,
         });
@@ -41,24 +46,51 @@ class GameScene extends Scene {
         }) as Types.Input.Keyboard.CursorKeys;
 
         // Physics
-        this.physics.add.collider(this.playerWalk, this.platforms);
+        this.physics.add.collider(this.playerWalk!, this.platforms);
+        this.physics.add.collider(this.playerIdle!, this.platforms);
     }
 
     update() {
         if (this.cursors?.right.isDown && this.cursors?.shift.isUp) {
+
+            // Set walk sprite visible
+            this.playerWalk!.visible = true;
+            // Set idle sprite invisible
+            this.playerIdle!.visible = false;
+
+            // Set attributes on walk sprite
             this.playerWalk?.setBounce(0.2);
             this.playerWalk?.setFlipX(false);
             this.playerWalk?.setVelocityX(160);
-            this.playerWalk?.anims.play('right', true);
+            // Set attributes on idle sprite
+            this.playerIdle?.setBounce(0.2);
+            this.playerIdle?.setFlipX(false);
+            this.playerIdle?.setVelocityX(160);
+
+            // Do walking animation
+            this.playerWalk?.anims.play('walk', true);
+
         } else if (this.cursors?.left.isDown && this.cursors?.shift.isUp) {
+            this.playerWalk!.visible = true;
+            this.playerIdle!.visible = false;
+
+            // Set attributes on walk sprite
             this.playerWalk?.setBounce(0.2);
             this.playerWalk?.setFlipX(true);
             this.playerWalk?.setVelocityX(-160);
-            this.playerWalk?.anims.play('right', true);
+            // Set attributes on idle sprite
+            this.playerIdle?.setBounce(0.2);
+            this.playerIdle?.setFlipX(true);
+            this.playerIdle?.setVelocityX(-160);
+
+            // Do walking animation
+            this.playerWalk?.anims.play('walk', true);
         }
         else {
             this.playerWalk?.setVelocityX(0);
-            this.playerWalk?.anims.play('still', true);
+            this.playerIdle?.setVelocityX(0);
+            this.playerWalk!.visible = false;
+            this.playerIdle!.visible = true;
         }
     }
 
@@ -67,9 +99,14 @@ class GameScene extends Scene {
         this.playerWalk = this.physics.add.sprite(100, 450, 'player-walk');
         this.playerWalk.setScale(1.5);
         this.playerWalk.setBounce(0.2);
+        // Player Idle
+        this.playerIdle = this.physics.add.sprite(100, 450, 'player-idle');
+        this.playerIdle.setScale(1.5);
+        this.playerIdle.setBounce(0.2);
+        this.playerIdle.visible = false;
         // Player animation
         this.anims.create({
-            key: 'right',
+            key: 'walk',
             frames: this.anims.generateFrameNumbers('player-walk', { start: 0, end: 7 }),
             frameRate: 10,
             repeat: -1
