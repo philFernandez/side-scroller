@@ -14,7 +14,7 @@ class GameScene extends Scene {
     }
 
     preload() {
-        this.load.image('sky', '/assets/sky.png');
+        this.load.image('sky', '/assets/Level1/sky.png');
         this.load.image('ground', '/assets/platform.png');
         this.load.spritesheet('player-walk', '/assets/Raider_1/Walk.png', {
             frameWidth: 128,
@@ -33,8 +33,7 @@ class GameScene extends Scene {
     create() {
         let { width, height } = this.sys.game.canvas;
         // Sky
-        this.sky = this.add.tileSprite(width / 2, height / 2, 0, 0, 'sky');
-        this.sky.setDisplaySize(width * 50, height);
+        this.add.image(width / 2, height / 2, 'sky').setScrollFactor(0);
         // Ground
         this.platforms = this.physics.add.staticGroup();
         this.platforms.create(width / 2, height - (height / 40), 'ground').setDisplaySize(width * 50, height / 20).refreshBody();
