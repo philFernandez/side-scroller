@@ -62,9 +62,17 @@ class GameScene extends Scene {
     update() {
         if (this.cursors?.right.isDown && this.cursors?.shift.isUp) {
             this.player?.setBounce(0.2);
+            this.player?.setFlipX(false);
             this.player?.setVelocityX(160);
             this.player?.anims.play('right', true);
-        } else {
+        } else if (this.cursors?.left.isDown && this.cursors?.shift.isUp) {
+            this.player?.setBounce(0.2);
+            this.player?.setFlipX(true);
+            this.player?.setVelocityX(-160);
+            this.player?.anims.play('right', true);
+        }
+
+        else {
             this.player?.setVelocityX(0);
             this.player?.anims.play('still', true);
         }
