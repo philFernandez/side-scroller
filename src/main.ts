@@ -36,13 +36,12 @@ class GameScene extends Scene {
         let { width, height } = this.sys.game.canvas;
         // Sky
         this.add.image(width / 2, height / 2, 'sky').setScrollFactor(0);
-        // Ground
-        // this.platforms = this.physics.add.staticGroup();
-        // this.platforms.create(width / 2, height - (height / 40), 'ground').setDisplaySize(width * 50, height / 20).refreshBody();
         // Road
         this.road = this.add.image(width / 2, height / 2, "road");
 
-
+        this.platforms = this.physics.add.staticGroup();
+        // Ground Platform
+        this.platforms.create(width / 2, height - (height / 40), undefined).setVisible(false).setBodySize(width * 50, height / 20, true);
 
         this.createPlayer();
         // Movement keys
@@ -56,7 +55,7 @@ class GameScene extends Scene {
         }) as Types.Input.Keyboard.CursorKeys;
 
         // Physics
-        this.physics.add.collider(this.player!, this.road!);
+        this.physics.add.collider(this.player!, this.platforms!);
         this.physics.world.bounds.setTo(0, 0, width * 50, height);
 
         // Camera 
