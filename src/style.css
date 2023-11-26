@@ -2,9 +2,17 @@
 body {
  margin: 0;
  padding: 1em;
+ background-color: darkgray;
 }
 
 div.container {
-    width: calc(100vw - 2em);
-    height: calc(100vh - 2em);
+    width: calc(100vw - 3em);
+    height: calc(100vh - 3em);
+    border: 0.5em solid lightgray;
+    border-radius: 10px 10px;
+}
+
+canvas#game {
+    width: 100%;
+    height: 100%;
 }
