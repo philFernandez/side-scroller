@@ -61,26 +61,34 @@ class GameScene extends Scene {
 
     update() {
         let walkSpeed = 160;
-        if (this.cursors?.right.isDown) {
+        if (this.cursors?.right.isDown) { // move right
+            // Dont flip sprites because they face right by default
             this.player?.setFlipX(false);
-
+            // Walk if shift is up
             if (this.cursors?.shift.isUp) {
                 this.player?.setVelocityX(walkSpeed);
                 this.player?.anims.play('walk', true);
-            } else {
+            } else { // else run
                 this.player?.setVelocityX(walkSpeed * 2);
                 this.player?.anims.play('run', true);
             }
 
-        } else if (this.cursors?.left.isDown && this.cursors?.shift.isUp) {
+        } else if (this.cursors?.left.isDown) { // move left
+            // Flip sprites to move left
             this.player?.setFlipX(true);
-            this.player?.setVelocityX(-160);
-            this.player?.anims.play('walk', true);
-        } else {
+            // Walk
+            if (this.cursors?.shift.isUp) {
+                this.player?.setVelocityX(-walkSpeed);
+                this.player?.anims.play('walk', true);
+            } else { // Run
+                this.player?.setVelocityX(-walkSpeed * 2);
+                this.player?.anims.play('run', true);
+            }
+        } else { // player is idle
             this.player?.setVelocityX(0);
             this.player?.anims.play('idle', true);
         }
-
+        // Jump
         if (this.cursors?.space.isDown && this.player?.body.touching.down) {
             this.player?.setVelocityY(-300);
         }
