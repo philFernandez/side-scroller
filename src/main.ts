@@ -1,4 +1,4 @@
-import { CANVAS, Game, GameObjects, Input, Physics, Scene, Types, WEBGL } from 'phaser';
+import { CANVAS, Game, GameObjects, Input, Physics, Scene, Types } from 'phaser';
 import './style.css';
 
 const canvas = document.querySelector('canvas#game') as HTMLCanvasElement;
@@ -9,6 +9,7 @@ class GameScene extends Scene {
     private platforms: Physics.Arcade.StaticGroup | undefined;
     private player: Types.Physics.Arcade.SpriteWithDynamicBody | undefined;
     private cursors: Types.Input.Keyboard.CursorKeys | undefined;
+    private worldWidth: number | undefined;
 
     constructor() {
         super('scene-game');
@@ -34,15 +35,17 @@ class GameScene extends Scene {
 
     create() {
         let { width, height } = this.sys.game.canvas;
-        let worldWidth = width * 2;
+        this.worldWidth = width * 30;
         // Sky
         this.add.image(width / 2, height / 2, 'sky').setScrollFactor(0);
         // Road
-        this.road = this.add.tileSprite(width / 2, height / 2, worldWidth + 1920, 1080, "road");
+        this.road = this.add.tileSprite(0, height / 2, this.worldWidth, 1080, "road");
+        this.road.setOrigin(0, 0.5);
+
 
         this.platforms = this.physics.add.staticGroup();
         // Ground Platform
-        this.platforms.create(width / 2, height - (height / 40), undefined).setVisible(false).setBodySize(worldWidth + 1920, height / 20, true);
+        this.platforms.create(width / 2, height - (height / 40), undefined).setVisible(false).setBodySize(this.worldWidth + 1920, height / 20, true);
 
         this.createPlayer();
 
@@ -58,10 +61,10 @@ class GameScene extends Scene {
 
         // Physics
         this.physics.add.collider(this.player!, this.platforms!);
-        this.physics.world.bounds.setTo(0, 0, worldWidth, height);
+        this.physics.world.bounds.setTo(0, 0, this.worldWidth, height);
 
         // Camera 
-        this.cameras.main.setBounds(0, 0, worldWidth, height);
+        this.cameras.main.setBounds(0, 0, this.worldWidth, height);
         this.cameras.main.startFollow(this.player!);
     }
 
@@ -102,7 +105,7 @@ class GameScene extends Scene {
 
     private createPlayer() {
         // PlayerWalk
-        this.player = this.physics.add.sprite(100, 450, 'player-walk');
+        this.player = this.physics.add.sprite(this.worldWidth! - 400, 450, 'player-walk');
         this.player.setScale(1.5);
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
