@@ -150,8 +150,7 @@ class GameScene extends Scene {
     private playerMove(direction: Direction) {
         let walkSpeed = 200;
         this.player?.setFlipX(direction != Direction.Right);
-        // Walk if shift is up
-        if (this.cursors?.shift.isUp) {
+        if (this.cursors?.shift.isUp) { // WALK
             // Since we're walking turn off the running footsteps if they're on
             if (this.runsteps?.isPlaying) {
                 this.runsteps?.stop();
@@ -160,9 +159,17 @@ class GameScene extends Scene {
             if (!this.footsteps?.isPlaying && this.player?.body.touching.down) {
                 this.footsteps?.play();
             }
+
             this.player?.setVelocityX(direction == Direction.Right ? walkSpeed : -walkSpeed);
-            this.player?.anims.play('walk', true);
-        } else { // else run
+
+            if (this.player?.body.touching.down) {
+                // If player is on ground to walk anim
+                this.player?.anims.play('walk', true);
+            } else {
+                // Else do idle (get better jump animation)
+                this.player?.anims.play('idle', true);
+            }
+        } else { // RUN
             // We are running, so stop playing walking footsteps
             if (this.footsteps?.isPlaying) {
                 this.footsteps?.stop();
@@ -173,8 +180,14 @@ class GameScene extends Scene {
             }
             // Move player
             this.player?.setVelocityX(direction == Direction.Right ? walkSpeed * 2 : walkSpeed * -2);
-            // Do run animation
-            this.player?.anims.play('run', true);
+
+            if (this.player?.body.touching.down) {
+                // If player is on ground do run anim
+                this.player?.anims.play('run', true);
+            } else {
+                // Else do idle (get a better animation for this)
+                this.player?.anims.play('idle', true);
+            }
         }
     }
 
@@ -183,7 +196,6 @@ class GameScene extends Scene {
         // this.player = this.physics.add.sprite(this.worldWidth! - 100, 450, 'player-walk');
         this.player = this.physics.add.sprite(100, 450, 'player-walk');
         this.player.setScale(2.5);
-        this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
 
         // Player animations
