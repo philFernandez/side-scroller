@@ -102,7 +102,7 @@ class GameScene extends Scene {
     }
 
     update() {
-        let walkSpeed = 160;
+        let walkSpeed = 200;
         if (this.cursors?.right.isDown) { // move right
             // Dont flip sprites because they face right by default
             this.player?.setFlipX(false);
@@ -140,7 +140,7 @@ class GameScene extends Scene {
         // PlayerWalk
         // this.player = this.physics.add.sprite(this.worldWidth! - 100, 450, 'player-walk');
         this.player = this.physics.add.sprite(100, 450, 'player-walk');
-        this.player.setScale(1.5);
+        this.player.setScale(2.5);
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
 
