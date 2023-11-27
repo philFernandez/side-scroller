@@ -20,6 +20,7 @@ class GameScene extends Scene {
         this.load.image('ground', '/assets/platform.png');
         this.load.image('road', '/assets/Level1/road.png');
         this.load.image('housesBG', '/assets/Level1/houses4.png');
+        this.load.image('houses3', '/assets/Level1/houses3.png');
 
         this.load.spritesheet('player-walk', '/assets/Raider_1/Walk.png', {
             frameWidth: 128,
@@ -44,7 +45,11 @@ class GameScene extends Scene {
         // House shadows in background
         let housesBG = this.add.tileSprite(0, 0, this.worldWidth, 1080, "housesBG");
         housesBG.setOrigin(0, 0);
-        housesBG.setScrollFactor(0.2);
+        housesBG.setScrollFactor(0.1);
+        // Houses 3
+        let houses3 = this.add.tileSprite(0, 0, this.worldWidth, 1080, 'houses3');
+        houses3.setOrigin(0, 0);
+        houses3.setScrollFactor(0.5);
 
 
         // Road
