@@ -23,6 +23,7 @@ class GameScene extends Scene {
         this.load.image('houses3', '/assets/Level1/houses3.png');
         this.load.image('houses2', '/assets/Level1/houses2.png');
         this.load.image('houses1', '/assets/Level1/houses1.png');
+        this.load.image('moon', '/assets/Level1/moon.png');
 
         this.load.spritesheet('player-walk', '/assets/Raider_1/Walk.png', {
             frameWidth: 128,
@@ -43,6 +44,9 @@ class GameScene extends Scene {
         this.worldWidth = width * 5;
         // Sky
         this.add.image(width / 2, height / 2, 'sky').setScrollFactor(0);
+        // Moon
+        this.add.image(width / 2, height / 2, 'moon').setScrollFactor(0);
+
 
         // House shadows in background
         let housesBG = this.add.tileSprite(0, 0, this.worldWidth, 1080, "housesBG");
@@ -171,7 +175,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 300 },
-            debug: true
+            debug: false
         }
     },
     scene: [
