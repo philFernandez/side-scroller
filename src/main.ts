@@ -12,6 +12,7 @@ class GameScene extends Scene {
     private worldWidth: number | undefined;
     private level1BgMusic: Sound.WebAudioSound | undefined;
     private footsteps: Sound.WebAudioSound | undefined;
+    private runsteps: Sound.WebAudioSound | undefined;
 
     constructor() {
         super('scene-game');
@@ -102,6 +103,7 @@ class GameScene extends Scene {
         this.level1BgMusic = this.sound.add('level1BgMusic', { loop: true, volume: 0.15 }) as Sound.WebAudioSound;
         this.level1BgMusic.play();
         this.footsteps = this.sound.add('footsteps', { loop: true }) as Sound.WebAudioSound;
+        this.runsteps = this.sound.add('footsteps', { rate: 2, loop: true }) as Sound.WebAudioSound;
 
 
         // Physics
@@ -120,13 +122,28 @@ class GameScene extends Scene {
             this.player?.setFlipX(false);
             // Walk if shift is up
             if (this.cursors?.shift.isUp) {
+                // Since we're walking turn off the running footsteps if they're on
+                if (this.runsteps?.isPlaying) {
+                    this.runsteps?.stop();
+                }
+                // Play walking footsteps if they're not already
                 if (!this.footsteps?.isPlaying) {
                     this.footsteps?.play();
                 }
                 this.player?.setVelocityX(walkSpeed);
                 this.player?.anims.play('walk', true);
             } else { // else run
+                // We are running, so stop playing walking footsteps
+                if (this.footsteps?.isPlaying) {
+                    this.footsteps?.stop();
+                }
+                // Play running footsteps if they're not already
+                if (!this.runsteps?.isPlaying) {
+                    this.runsteps?.play();
+                }
+                // Move player
                 this.player?.setVelocityX(walkSpeed * 2);
+                // Do run animation
                 this.player?.anims.play('run', true);
             }
 
@@ -135,18 +152,32 @@ class GameScene extends Scene {
             this.player?.setFlipX(true);
             // Walk
             if (this.cursors?.shift.isUp) {
+                // Since we're walking turn off the running footsteps if they're on
+                if (this.runsteps?.isPlaying) {
+                    this.runsteps?.stop();
+                }
+                // Play walking footsteps
                 if (!this.footsteps?.isPlaying) {
                     this.footsteps?.play();
                 }
                 this.player?.setVelocityX(-walkSpeed);
                 this.player?.anims.play('walk', true);
             } else { // Run
+                if (this.footsteps?.isPlaying) {
+                    this.footsteps?.stop();
+                }
+                if (!this.runsteps?.isPlaying) {
+                    this.runsteps?.play();
+                }
                 this.player?.setVelocityX(-walkSpeed * 2);
                 this.player?.anims.play('run', true);
             }
         } else { // player is idle
             if (this.footsteps?.isPlaying) {
-                this.footsteps?.pause();
+                this.footsteps?.stop();
+            }
+            if (this.runsteps?.isPlaying) {
+                this.runsteps?.stop();
             }
             this.player?.setVelocityX(0);
             this.player?.anims.play('idle', true);
