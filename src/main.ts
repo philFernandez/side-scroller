@@ -1,4 +1,4 @@
-import { CANVAS, Game, GameObjects, Input, Physics, Scene, Types } from 'phaser';
+import { CANVAS, Game, GameObjects, Input, Physics, Scene, Sound, Types } from 'phaser';
 import './style.css';
 
 const canvas = document.querySelector('canvas#game') as HTMLCanvasElement;
@@ -10,6 +10,8 @@ class GameScene extends Scene {
     private player: Types.Physics.Arcade.SpriteWithDynamicBody | undefined;
     private cursors: Types.Input.Keyboard.CursorKeys | undefined;
     private worldWidth: number | undefined;
+    private level1BgMusic: Sound.WebAudioSound | undefined;
+    private footsteps: Sound.WebAudioSound | undefined;
 
     constructor() {
         super('scene-game');
@@ -40,6 +42,7 @@ class GameScene extends Scene {
         });
         // Audio
         this.load.audio('level1BgMusic', '/assets/Sound/bg-Stylz.mp3');
+        this.load.audio('footsteps', '/assets/Sound/walking.wav');
     }
 
     create() {
@@ -95,9 +98,11 @@ class GameScene extends Scene {
             'shift': Input.Keyboard.KeyCodes.SHIFT,
         }) as Types.Input.Keyboard.CursorKeys;
 
-        // Music
-        let music = this.sound.add('level1BgMusic', { loop: true, volume: 0.15 });
-        music.play();
+        // Music/Sounds
+        this.level1BgMusic = this.sound.add('level1BgMusic', { loop: true, volume: 0.15 }) as Sound.WebAudioSound;
+        this.level1BgMusic.play();
+        this.footsteps = this.sound.add('footsteps', { loop: true }) as Sound.WebAudioSound;
+
 
         // Physics
         this.physics.add.collider(this.player!, this.platforms!);
@@ -115,6 +120,9 @@ class GameScene extends Scene {
             this.player?.setFlipX(false);
             // Walk if shift is up
             if (this.cursors?.shift.isUp) {
+                if (!this.footsteps?.isPlaying) {
+                    this.footsteps?.play();
+                }
                 this.player?.setVelocityX(walkSpeed);
                 this.player?.anims.play('walk', true);
             } else { // else run
@@ -127,6 +135,9 @@ class GameScene extends Scene {
             this.player?.setFlipX(true);
             // Walk
             if (this.cursors?.shift.isUp) {
+                if (!this.footsteps?.isPlaying) {
+                    this.footsteps?.play();
+                }
                 this.player?.setVelocityX(-walkSpeed);
                 this.player?.anims.play('walk', true);
             } else { // Run
@@ -134,6 +145,9 @@ class GameScene extends Scene {
                 this.player?.anims.play('run', true);
             }
         } else { // player is idle
+            if (this.footsteps?.isPlaying) {
+                this.footsteps?.pause();
+            }
             this.player?.setVelocityX(0);
             this.player?.anims.play('idle', true);
         }
