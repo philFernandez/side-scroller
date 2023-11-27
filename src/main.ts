@@ -35,7 +35,7 @@ class GameScene extends Scene {
 
     create() {
         let { width, height } = this.sys.game.canvas;
-        this.worldWidth = width * 30;
+        this.worldWidth = width * 5;
         // Sky
         this.add.image(width / 2, height / 2, 'sky').setScrollFactor(0);
         // Road
@@ -45,7 +45,11 @@ class GameScene extends Scene {
 
         this.platforms = this.physics.add.staticGroup();
         // Ground Platform
-        this.platforms.create(width / 2, height - (height / 40), undefined).setVisible(false).setBodySize(this.worldWidth + 1920, height / 20, true);
+
+        let platform = this.platforms.create(0, height - (height / 40), undefined);
+        platform.setVisible(false);
+        platform.setBodySize(this.worldWidth * 2, height / 20, true);
+
 
         this.createPlayer();
 
@@ -105,7 +109,7 @@ class GameScene extends Scene {
 
     private createPlayer() {
         // PlayerWalk
-        this.player = this.physics.add.sprite(this.worldWidth! - 400, 450, 'player-walk');
+        this.player = this.physics.add.sprite(this.worldWidth! - 100, 450, 'player-walk');
         this.player.setScale(1.5);
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
@@ -141,7 +145,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 300 },
-            debug: false
+            debug: true
         }
     },
     scene: [
