@@ -5,3 +5,6 @@
 - [Phaser](https://phaser.io/)
 - [CraftPix Game Assets](https://craftpix.net/)
 - [Mixit Sound Effects](https://mixkit.co/)
+---
+![](./Game.png)
+
