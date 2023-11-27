@@ -19,6 +19,8 @@ class GameScene extends Scene {
         this.load.image('sky', '/assets/Level1/sky.png');
         this.load.image('ground', '/assets/platform.png');
         this.load.image('road', '/assets/Level1/road.png');
+        this.load.image('housesBG', '/assets/Level1/houses4.png');
+
         this.load.spritesheet('player-walk', '/assets/Raider_1/Walk.png', {
             frameWidth: 128,
             frameHeight: 128,
@@ -38,9 +40,17 @@ class GameScene extends Scene {
         this.worldWidth = width * 5;
         // Sky
         this.add.image(width / 2, height / 2, 'sky').setScrollFactor(0);
+
+        // House shadows in background
+        let housesBG = this.add.tileSprite(0, 0, this.worldWidth, 1080, "housesBG");
+        housesBG.setOrigin(0, 0);
+        housesBG.setScrollFactor(0.2);
+
+
         // Road
-        this.road = this.add.tileSprite(0, height / 2, this.worldWidth, 1080, "road");
-        this.road.setOrigin(0, 0.5);
+        let road = this.add.tileSprite(0, height / 2, this.worldWidth, 1080, "road");
+        road.setOrigin(0, 0.5);
+
 
 
         this.platforms = this.physics.add.staticGroup();
@@ -109,7 +119,8 @@ class GameScene extends Scene {
 
     private createPlayer() {
         // PlayerWalk
-        this.player = this.physics.add.sprite(this.worldWidth! - 100, 450, 'player-walk');
+        // this.player = this.physics.add.sprite(this.worldWidth! - 100, 450, 'player-walk');
+        this.player = this.physics.add.sprite(100, 450, 'player-walk');
         this.player.setScale(1.5);
         this.player.setBounce(0.2);
         this.player.setCollideWorldBounds(true);
