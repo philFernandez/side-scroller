@@ -16,6 +16,7 @@ class GameScene extends Scene {
     }
 
     preload() {
+        // Images
         this.load.image('sky', '/assets/Level1/sky.png');
         this.load.image('ground', '/assets/platform.png');
         this.load.image('road', '/assets/Level1/road.png');
@@ -24,7 +25,7 @@ class GameScene extends Scene {
         this.load.image('houses2', '/assets/Level1/houses2.png');
         this.load.image('houses1', '/assets/Level1/houses1.png');
         this.load.image('moon', '/assets/Level1/moon.png');
-
+        // Sprite sheets
         this.load.spritesheet('player-walk', '/assets/Raider_1/Walk.png', {
             frameWidth: 128,
             frameHeight: 128,
@@ -37,6 +38,8 @@ class GameScene extends Scene {
             frameWidth: 128,
             frameHeight: 128,
         });
+        // Audio
+        this.load.audio('level1BgMusic', '/assets/Sound/bg-Stylz.mp3');
     }
 
     create() {
@@ -91,6 +94,10 @@ class GameScene extends Scene {
             'space': Input.Keyboard.KeyCodes.SPACE,
             'shift': Input.Keyboard.KeyCodes.SHIFT,
         }) as Types.Input.Keyboard.CursorKeys;
+
+        // Music
+        let music = this.sound.add('level1BgMusic', { loop: true, volume: 0.15 });
+        music.play();
 
         // Physics
         this.physics.add.collider(this.player!, this.platforms!);
