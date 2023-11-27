@@ -5,7 +5,7 @@ const canvas = document.querySelector('canvas#game') as HTMLCanvasElement;
 
 class GameScene extends Scene {
     private sky: GameObjects.TileSprite | undefined;
-    private road: GameObjects.Image | undefined;
+    private road: GameObjects.TileSprite | undefined;
     private platforms: Physics.Arcade.StaticGroup | undefined;
     private player: Types.Physics.Arcade.SpriteWithDynamicBody | undefined;
     private cursors: Types.Input.Keyboard.CursorKeys | undefined;
@@ -34,16 +34,18 @@ class GameScene extends Scene {
 
     create() {
         let { width, height } = this.sys.game.canvas;
+        let worldWidth = width * 2;
         // Sky
         this.add.image(width / 2, height / 2, 'sky').setScrollFactor(0);
         // Road
-        this.road = this.add.image(width / 2, height / 2, "road");
+        this.road = this.add.tileSprite(width / 2, height / 2, worldWidth + 1920, 1080, "road");
 
         this.platforms = this.physics.add.staticGroup();
         // Ground Platform
-        this.platforms.create(width / 2, height - (height / 40), undefined).setVisible(false).setBodySize(width * 50, height / 20, true);
+        this.platforms.create(width / 2, height - (height / 40), undefined).setVisible(false).setBodySize(worldWidth + 1920, height / 20, true);
 
         this.createPlayer();
+
         // Movement keys
         this.cursors = this.input.keyboard?.addKeys({
             'up': Input.Keyboard.KeyCodes.W,
@@ -56,10 +58,10 @@ class GameScene extends Scene {
 
         // Physics
         this.physics.add.collider(this.player!, this.platforms!);
-        this.physics.world.bounds.setTo(0, 0, width * 50, height);
+        this.physics.world.bounds.setTo(0, 0, worldWidth, height);
 
         // Camera 
-        this.cameras.main.setBounds(0, 0, width * 50, height);
+        this.cameras.main.setBounds(0, 0, worldWidth, height);
         this.cameras.main.startFollow(this.player!);
     }
 
@@ -136,7 +138,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 300 },
-            debug: true
+            debug: false
         }
     },
     scene: [
