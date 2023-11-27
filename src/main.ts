@@ -138,6 +138,12 @@ class GameScene extends Scene {
         // Jump
         if (this.cursors?.space.isDown && this.player?.body.touching.down) {
             this.player?.setVelocityY(-300);
+            if (this.footsteps?.isPlaying) {
+                this.footsteps?.stop();
+            }
+            if (this.runsteps?.isPlaying) {
+                this.runsteps?.stop();
+            }
         }
     }
 
@@ -151,7 +157,7 @@ class GameScene extends Scene {
                 this.runsteps?.stop();
             }
             // Play walking footsteps if they're not already
-            if (!this.footsteps?.isPlaying) {
+            if (!this.footsteps?.isPlaying && this.player?.body.touching.down) {
                 this.footsteps?.play();
             }
             this.player?.setVelocityX(direction == Direction.Right ? walkSpeed : -walkSpeed);
@@ -162,7 +168,7 @@ class GameScene extends Scene {
                 this.footsteps?.stop();
             }
             // Play running footsteps if they're not already
-            if (!this.runsteps?.isPlaying) {
+            if (!this.runsteps?.isPlaying && this.player?.body.touching.down) {
                 this.runsteps?.play();
             }
             // Move player
