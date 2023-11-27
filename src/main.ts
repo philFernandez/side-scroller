@@ -3,6 +3,11 @@ import './style.css';
 
 const canvas = document.querySelector('canvas#game') as HTMLCanvasElement;
 
+enum Direction {
+    Right,
+    Left
+}
+
 class GameScene extends Scene {
     private sky: GameObjects.TileSprite | undefined;
     private road: GameObjects.TileSprite | undefined;
@@ -116,62 +121,10 @@ class GameScene extends Scene {
     }
 
     update() {
-        let walkSpeed = 200;
-        if (this.cursors?.right.isDown) { // move right
-            // Dont flip sprites because they face right by default
-            this.player?.setFlipX(false);
-            // Walk if shift is up
-            if (this.cursors?.shift.isUp) {
-                // Since we're walking turn off the running footsteps if they're on
-                if (this.runsteps?.isPlaying) {
-                    this.runsteps?.stop();
-                }
-                // Play walking footsteps if they're not already
-                if (!this.footsteps?.isPlaying) {
-                    this.footsteps?.play();
-                }
-                this.player?.setVelocityX(walkSpeed);
-                this.player?.anims.play('walk', true);
-            } else { // else run
-                // We are running, so stop playing walking footsteps
-                if (this.footsteps?.isPlaying) {
-                    this.footsteps?.stop();
-                }
-                // Play running footsteps if they're not already
-                if (!this.runsteps?.isPlaying) {
-                    this.runsteps?.play();
-                }
-                // Move player
-                this.player?.setVelocityX(walkSpeed * 2);
-                // Do run animation
-                this.player?.anims.play('run', true);
-            }
-
-        } else if (this.cursors?.left.isDown) { // move left
-            // Flip sprites to move left
-            this.player?.setFlipX(true);
-            // Walk
-            if (this.cursors?.shift.isUp) {
-                // Since we're walking turn off the running footsteps if they're on
-                if (this.runsteps?.isPlaying) {
-                    this.runsteps?.stop();
-                }
-                // Play walking footsteps
-                if (!this.footsteps?.isPlaying) {
-                    this.footsteps?.play();
-                }
-                this.player?.setVelocityX(-walkSpeed);
-                this.player?.anims.play('walk', true);
-            } else { // Run
-                if (this.footsteps?.isPlaying) {
-                    this.footsteps?.stop();
-                }
-                if (!this.runsteps?.isPlaying) {
-                    this.runsteps?.play();
-                }
-                this.player?.setVelocityX(-walkSpeed * 2);
-                this.player?.anims.play('run', true);
-            }
+        if (this.cursors?.right.isDown) {
+            this.playerMove(Direction.Right);
+        } else if (this.cursors?.left.isDown) {
+            this.playerMove(Direction.Left);
         } else { // player is idle
             if (this.footsteps?.isPlaying) {
                 this.footsteps?.stop();
@@ -185,6 +138,37 @@ class GameScene extends Scene {
         // Jump
         if (this.cursors?.space.isDown && this.player?.body.touching.down) {
             this.player?.setVelocityY(-300);
+        }
+    }
+
+    private playerMove(direction: Direction) {
+        let walkSpeed = 200;
+        this.player?.setFlipX(direction != Direction.Right);
+        // Walk if shift is up
+        if (this.cursors?.shift.isUp) {
+            // Since we're walking turn off the running footsteps if they're on
+            if (this.runsteps?.isPlaying) {
+                this.runsteps?.stop();
+            }
+            // Play walking footsteps if they're not already
+            if (!this.footsteps?.isPlaying) {
+                this.footsteps?.play();
+            }
+            this.player?.setVelocityX(direction == Direction.Right ? walkSpeed : -walkSpeed);
+            this.player?.anims.play('walk', true);
+        } else { // else run
+            // We are running, so stop playing walking footsteps
+            if (this.footsteps?.isPlaying) {
+                this.footsteps?.stop();
+            }
+            // Play running footsteps if they're not already
+            if (!this.runsteps?.isPlaying) {
+                this.runsteps?.play();
+            }
+            // Move player
+            this.player?.setVelocityX(direction == Direction.Right ? walkSpeed * 2 : walkSpeed * -2);
+            // Do run animation
+            this.player?.anims.play('run', true);
         }
     }
 
