@@ -24,35 +24,9 @@ class GameScene extends Scene {
     }
 
     preload() {
-        // Images
-        this.load.image('sky', '/assets/Level1/sky.png');
-        this.load.image('ground', '/assets/platform.png');
-        this.load.image('road', '/assets/Level1/road.png');
-        this.load.image('housesBG', '/assets/Level1/houses4.png');
-        this.load.image('houses3', '/assets/Level1/houses3.png');
-        this.load.image('houses2', '/assets/Level1/houses2.png');
-        this.load.image('houses1', '/assets/Level1/houses1.png');
-        this.load.image('moon', '/assets/Level1/moon.png');
-        // Sprite sheets
-        this.load.spritesheet('player-walk', '/assets/Raider_1/Walk.png', {
-            frameWidth: 128,
-            frameHeight: 128,
-        });
-        this.load.spritesheet('player-run', '/assets/Raider_1/Run.png', {
-            frameWidth: 128,
-            frameHeight: 128,
-        });
-        this.load.spritesheet('player-idle', '/assets/Raider_1/Idle.png', {
-            frameWidth: 128,
-            frameHeight: 128,
-        });
-        this.load.spritesheet('player-jump', '/assets/Raider_1/Jump.png', {
-            frameWidth: 128,
-            frameHeight: 128
-        });
-        // Audio
-        this.load.audio('level1BgMusic', '/assets/Sound/bg-Stylz.mp3');
-        this.load.audio('footsteps', '/assets/Sound/walking.wav');
+        this.loadImages();
+        this.loadSprites();
+        this.loadAudio();
     }
 
     create() {
@@ -231,7 +205,50 @@ class GameScene extends Scene {
             frameRate: 20
         });
     }
+
+    private loadImages() {
+        this.load.image('sky', '/assets/Level1/sky.png');
+        this.load.image('ground', '/assets/platform.png');
+        this.load.image('road', '/assets/Level1/road.png');
+        this.load.image('housesBG', '/assets/Level1/houses4.png');
+        this.load.image('houses3', '/assets/Level1/houses3.png');
+        this.load.image('houses2', '/assets/Level1/houses2.png');
+        this.load.image('houses1', '/assets/Level1/houses1.png');
+        this.load.image('moon', '/assets/Level1/moon.png');
+    }
+
+    private loadSprites() {
+        // Player
+        this.load.spritesheet('player-walk', '/assets/Raider_1/Walk.png', {
+            frameWidth: 128,
+            frameHeight: 128,
+        });
+        this.load.spritesheet('player-run', '/assets/Raider_1/Run.png', {
+            frameWidth: 128,
+            frameHeight: 128,
+        });
+        this.load.spritesheet('player-idle', '/assets/Raider_1/Idle.png', {
+            frameWidth: 128,
+            frameHeight: 128,
+        });
+        this.load.spritesheet('player-jump', '/assets/Raider_1/Jump.png', {
+            frameWidth: 128,
+            frameHeight: 128
+        });
+        // Green-Slime
+        this.load.spritesheet('slime-attack3', '/assets/Green_Slime/Attack_3.png', {
+            frameWidth: 128,
+            frameHeight: 128
+        });
+    }
+
+    private loadAudio() {
+        // Audio
+        this.load.audio('level1BgMusic', '/assets/Sound/bg-Stylz.mp3');
+        this.load.audio('footsteps', '/assets/Sound/walking.wav');
+    }
 }
+
 
 const config = {
     type: CANVAS,
