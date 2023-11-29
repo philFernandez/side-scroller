@@ -135,7 +135,13 @@ class GameScene extends Scene {
         }
         // Jump
         if (this.cursors?.space.isDown && this.player?.body.touching.down) {
-            this.player?.setVelocityY(-300);
+
+            if (this.cursors?.shift.isDown) {
+                this.player?.setVelocityY(-300);
+            } else {
+                this.player?.setVelocity(-225);
+            }
+
             if (this.footsteps?.isPlaying) {
                 this.footsteps?.stop();
             }
