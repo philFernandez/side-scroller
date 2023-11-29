@@ -59,7 +59,6 @@ class GameScene extends Scene {
         // Moon
         this.add.image(width / 2, height / 2, 'moon').setScrollFactor(0);
 
-
         // House shadows in background
         let housesBG = this.add.tileSprite(0, 0, this.worldWidth, 1080, "housesBG");
         housesBG.setOrigin(0, 0);
@@ -77,12 +76,9 @@ class GameScene extends Scene {
         houses1.setOrigin(0, 0);
         houses1.setScrollFactor(0.7);
 
-
         // Road
         let road = this.add.tileSprite(0, height / 2, this.worldWidth, 1080, "road");
         road.setOrigin(0, 0.5);
-
-
 
         this.platforms = this.physics.add.staticGroup();
         // Ground Platform
@@ -90,7 +86,6 @@ class GameScene extends Scene {
         let platform = this.platforms.create(0, height - (height / 40), undefined);
         platform.setVisible(false);
         platform.setBodySize(this.worldWidth * 2, height / 20, true);
-
 
         this.createPlayer();
 
@@ -105,11 +100,10 @@ class GameScene extends Scene {
         }) as Types.Input.Keyboard.CursorKeys;
 
         // Music/Sounds
-        this.level1BgMusic = this.sound.add('level1BgMusic', { loop: true, volume: 0.15 }) as Sound.WebAudioSound;
+        this.level1BgMusic = this.sound.add('level1BgMusic', { loop: true, volume: 0.1 }) as Sound.WebAudioSound;
         this.level1BgMusic.play();
         this.footsteps = this.sound.add('footsteps', { loop: true }) as Sound.WebAudioSound;
         this.runsteps = this.sound.add('footsteps', { rate: 2, loop: true }) as Sound.WebAudioSound;
-
 
         // Physics
         this.physics.add.collider(this.player!, this.platforms!);
