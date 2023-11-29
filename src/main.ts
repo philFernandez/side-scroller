@@ -46,6 +46,10 @@ class GameScene extends Scene {
             frameWidth: 128,
             frameHeight: 128,
         });
+        this.load.spritesheet('player-jump', '/assets/Raider_1/Jump.png', {
+            frameWidth: 128,
+            frameHeight: 128
+        });
         // Audio
         this.load.audio('level1BgMusic', '/assets/Sound/bg-Stylz.mp3');
         this.load.audio('footsteps', '/assets/Sound/walking.wav');
@@ -160,8 +164,10 @@ class GameScene extends Scene {
                 // If player is on ground to walk anim
                 this.player?.anims.play('walk', true);
             } else {
-                // Else do idle (get better jump animation)
-                this.player?.anims.play('idle', true);
+                // Else do jump 
+                if (this.player?.anims.isPlaying) {
+                    this.player?.anims.play('jump', true);
+                }
             }
         } else { // RUN
             // We are running, so stop playing walking footsteps
@@ -179,8 +185,10 @@ class GameScene extends Scene {
                 // If player is on ground do run anim
                 this.player?.anims.play('run', true);
             } else {
-                // Else do idle (get a better animation for this)
-                this.player?.anims.play('idle', true);
+                // Else do jump 
+                if (this.player?.anims.isPlaying) {
+                    this.player?.anims.play('jump', true);
+                }
             }
         }
     }
@@ -210,6 +218,11 @@ class GameScene extends Scene {
             frames: this.anims.generateFrameNumbers('player-idle', { start: 0, end: 5 }),
             frameRate: 6,
             repeat: -1
+        });
+        this.anims.create({
+            key: 'jump',
+            frames: this.anims.generateFrameNumbers('player-jump', { start: 0, end: 8 }),
+            frameRate: 20
         });
     }
 }
