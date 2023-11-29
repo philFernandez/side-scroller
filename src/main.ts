@@ -2,6 +2,7 @@ import { CANVAS, Game, GameObjects, Input, Physics, Scene, Sound, Types } from '
 import './style.css';
 
 const canvas = document.querySelector('canvas#game') as HTMLCanvasElement;
+const worldGravity = 300;
 
 enum Direction {
     Right,
@@ -96,6 +97,12 @@ class GameScene extends Scene {
     }
 
     update() {
+        this.handleMovementKeys();
+        this.greenSlimeAIMove();
+    }
+
+
+    private handleMovementKeys() {
         if (this.cursors?.right.isDown) {
             this.playerMove(Direction.Right);
         } else if (this.cursors?.left.isDown) {
@@ -127,6 +134,19 @@ class GameScene extends Scene {
             }
         }
     }
+
+    private greenSlimeAIMove() {
+        for (const greenSlime of this.greenSlimes!.getChildren()) {
+            if (!greenSlime.active) {
+                continue;
+            }
+            const typedSlime = greenSlime as Physics.Arcade.Sprite;
+            const angle = Phaser.Math.Angle.Between(typedSlime.x, typedSlime.y, this.player!.x, this.player!.y);
+            const speed = 100;
+            typedSlime.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
+        }
+    }
+
 
     private playerMove(direction: Direction) {
         let walkSpeed = 200;
@@ -180,6 +200,7 @@ class GameScene extends Scene {
         this.greenSlimes = this.physics.add.group({
             key: 'green-slime-attack3',
             repeat: 5,
+            gravityY: -worldGravity,
             setXY: { x: 10, y: 0, stepX: 500, stepY: 0 }
         });
     }
@@ -268,8 +289,8 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 300 },
-            debug: false
+            gravity: { y: worldGravity },
+            debug: true
         }
     },
     scene: [
