@@ -18,6 +18,7 @@ class GameScene extends Scene {
     private level1BgMusic: Sound.WebAudioSound | undefined;
     private footsteps: Sound.WebAudioSound | undefined;
     private runsteps: Sound.WebAudioSound | undefined;
+    private greenSlimes: Physics.Arcade.Group | undefined;
 
     constructor() {
         super('scene-game');
@@ -66,6 +67,7 @@ class GameScene extends Scene {
         platform.setBodySize(this.worldWidth * 2, height / 20, true);
 
         this.createPlayer();
+        this.createGreenSlime();
 
         // Movement keys
         this.cursors = this.input.keyboard?.addKeys({
@@ -78,13 +80,14 @@ class GameScene extends Scene {
         }) as Types.Input.Keyboard.CursorKeys;
 
         // Music/Sounds
-        this.level1BgMusic = this.sound.add('level1BgMusic', { loop: true, volume: 0.1 }) as Sound.WebAudioSound;
+        this.level1BgMusic = this.sound.add('level1BgMusic', { loop: true, volume: 0.01 }) as Sound.WebAudioSound;
         this.level1BgMusic.play();
         this.footsteps = this.sound.add('footsteps', { loop: true }) as Sound.WebAudioSound;
         this.runsteps = this.sound.add('footsteps', { rate: 2, loop: true }) as Sound.WebAudioSound;
 
         // Physics
         this.physics.add.collider(this.player!, this.platforms!);
+        this.physics.add.collider(this.greenSlimes!, this.platforms!);
         this.physics.world.bounds.setTo(0, 0, this.worldWidth, height);
 
         // Camera 
@@ -173,6 +176,14 @@ class GameScene extends Scene {
         }
     }
 
+    private createGreenSlime() {
+        this.greenSlimes = this.physics.add.group({
+            key: 'green-slime-attack3',
+            repeat: 5,
+            setXY: { x: 10, y: 0, stepX: 500, stepY: 0 }
+        });
+    }
+
     private createPlayer() {
         // PlayerWalk
         // this.player = this.physics.add.sprite(this.worldWidth! - 100, 450, 'player-walk');
@@ -236,14 +247,13 @@ class GameScene extends Scene {
             frameHeight: 128
         });
         // Green-Slime
-        this.load.spritesheet('slime-attack3', '/assets/Green_Slime/Attack_3.png', {
+        this.load.spritesheet('green-slime-attack3', '/assets/Green_Slime/Attack_3.png', {
             frameWidth: 128,
             frameHeight: 128
         });
     }
 
     private loadAudio() {
-        // Audio
         this.load.audio('level1BgMusic', '/assets/Sound/bg-Stylz.mp3');
         this.load.audio('footsteps', '/assets/Sound/walking.wav');
     }
