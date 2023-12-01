@@ -89,6 +89,7 @@ class GameScene extends Scene {
         // Physics
         this.physics.add.collider(this.player!, this.platforms!);
         this.physics.add.collider(this.greenSlimes!, this.platforms!);
+        this.physics.add.collider(this.player!, this.greenSlimes!);
         this.physics.world.bounds.setTo(0, 0, this.worldWidth, height);
 
         // Camera 
