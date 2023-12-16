@@ -82,7 +82,7 @@ class GameScene extends Scene {
         }) as Types.Input.Keyboard.CursorKeys;
 
         // Music/Sounds
-        this.level1BgMusic = this.sound.add('level1BgMusic', { loop: true, volume: 0.01 }) as Sound.WebAudioSound;
+        this.level1BgMusic = this.sound.add('level1BgMusic', { loop: true, volume: 0.09 }) as Sound.WebAudioSound;
         this.level1BgMusic.play();
         this.footsteps = this.sound.add('footsteps', { loop: true }) as Sound.WebAudioSound;
         this.runsteps = this.sound.add('footsteps', { rate: 2, loop: true }) as Sound.WebAudioSound;
@@ -215,12 +215,20 @@ class GameScene extends Scene {
     }
 
     private createGreenSlime() {
+
+        // Create green slime group specifying number of and position for each
         this.greenSlimes = this.physics.add.group({
             key: 'green-slime-attack3',
             repeat: 5,
             gravityY: -worldGravity,
-            setXY: { x: 10, y: 0, stepX: 500, stepY: 0 }
+            setXY: { x: 10, y: 0, stepX: 500, stepY: 0 },
         });
+
+
+        // Make hitboxes smaller
+        this.greenSlimes?.children.iterateLocal('setBodySize', 50, 50);
+        this.greenSlimes?.children.iterateLocal('setOffset', 40, 85);
+
     }
 
     private createPlayer() {
