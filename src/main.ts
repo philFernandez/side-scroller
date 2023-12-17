@@ -102,7 +102,7 @@ class GameScene extends Scene {
     }
 
 
-    slimePlayerCollision() {
+    private slimePlayerCollision() {
         this.player?.setTint(0x00ff00);
         this.collisionHappening = true;
     }
@@ -111,7 +111,7 @@ class GameScene extends Scene {
     update() {
         if (!this.collisionHappening) {
             this.handleMovementKeys();
-            this.greenSlimeAIMove();
+            this.greenSlimeMove();
         } else if (this.collisionHappening && !this.gameOver) {
             this.gameOver = true;
             this.player?.anims.play('die', true);
@@ -163,15 +163,29 @@ class GameScene extends Scene {
             const typedSlime = greenSlime as Physics.Arcade.Sprite;
             let angle = Phaser.Math.Angle.Between(typedSlime.x, typedSlime.y, this.player!.x, this.player!.y);
             const speed = 300;
-            const randomness = 1;
+            const randomness = 0.2;
             angle += Phaser.Math.FloatBetween(-randomness, randomness);
             typedSlime.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
         }
     }
 
+    private greenSlimeMove() {
+        const counter = this.game.getFrame() % 100;
+        // Alternate between simple movement where slime directly tracks player and complex movement 
+        // where slime moves randomly. 33% simple 66% complex
+        if (counter < 33) {
+            console.log('simp');
+            this.greenSlimeAIMoveSimple();
+        } else {
+            console.log('NOT simp');
+            this.greenSlimeAIMove();
+        }
+    }
+
+
     private greenSlimeAIMove() {
         const changeInterval = 500; // Direction change every 500 ms
-        const maxAngleDeviation = Math.PI / 2; // Max deviation of pi/4 radians or 45 degrees
+        const maxAngleDeviation = Math.PI / 2; // Max deviation of pi/2 radians or 90 degrees
         for (const greenSlime of this.greenSlimes!.getChildren()) {
             if (!greenSlime.active) {
                 continue;
