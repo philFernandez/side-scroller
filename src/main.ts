@@ -20,6 +20,8 @@ class GameScene extends Scene {
     private footsteps: Sound.WebAudioSound | undefined;
     private runsteps: Sound.WebAudioSound | undefined;
     private greenSlimes: Physics.Arcade.Group | undefined;
+    private redBullets: Physics.Arcade.Group | undefined;
+    private shootKey: Input.Keyboard.Key | undefined;
     private collisionHappening = false;
     private gameOver = false;
     private slimeDirectionMap: Map<Phaser.Physics.Arcade.Sprite, { nextDirectionChange: number, targetAngle: number; }> = new Map();
@@ -73,6 +75,7 @@ class GameScene extends Scene {
 
         this.createPlayer();
         this.createGreenSlime();
+        this.createBullets();
 
         // Movement keys
         this.cursors = this.input.keyboard?.addKeys({
@@ -83,6 +86,8 @@ class GameScene extends Scene {
             'space': Input.Keyboard.KeyCodes.SPACE,
             'shift': Input.Keyboard.KeyCodes.SHIFT,
         }) as Types.Input.Keyboard.CursorKeys;
+
+        this.shootKey = this.input.keyboard?.addKey(Input.Keyboard.KeyCodes.J);
 
         // Music/Sounds
         this.level1BgMusic = this.sound.add('level1BgMusic', { loop: true, volume: 0.09 }) as Sound.WebAudioSound;
@@ -101,16 +106,29 @@ class GameScene extends Scene {
         this.cameras.main.startFollow(this.player!);
     }
 
+    private shootBullet() {
+        if (this.shootKey?.isDown) {
+            const bullet: Physics.Arcade.Sprite = this.redBullets?.get(this.player?.x, this.player?.y);
+            bullet.setScale(4, 2);
+            if (bullet) {
+                bullet.setActive(true);
+                bullet.setVisible(true);
+                bullet.setVelocityX(3300);
+            }
+        }
+    }
+
 
     private slimePlayerCollision() {
-        this.player?.setTint(0x00ff00);
-        this.collisionHappening = true;
+        // this.player?.setTint(0x00ff00);
+        // this.collisionHappening = true;
     }
 
 
     update() {
         if (!this.collisionHappening) {
             this.handleMovementKeys();
+            this.shootBullet();
             this.greenSlimeMove();
         } else if (this.collisionHappening && !this.gameOver) {
             this.gameOver = true;
@@ -174,10 +192,8 @@ class GameScene extends Scene {
         // Alternate between simple movement where slime directly tracks player and complex movement 
         // where slime moves randomly. 33% simple 66% complex
         if (counter < 33) {
-            console.log('simp');
             this.greenSlimeAIMoveSimple();
         } else {
-            console.log('NOT simp');
             this.greenSlimeAIMove();
         }
     }
@@ -259,6 +275,13 @@ class GameScene extends Scene {
         }
     }
 
+    private createBullets() {
+        this.redBullets = this.physics.add.group({
+            defaultKey: 'red-bullet',
+            maxSize: 1000, // means max of 10 bullets
+        });
+    }
+
     private createGreenSlime() {
 
         // Create green slime group specifying number of and position for each
@@ -326,6 +349,7 @@ class GameScene extends Scene {
         this.load.image('houses2', '/assets/Level1/houses2.png');
         this.load.image('houses1', '/assets/Level1/houses1.png');
         this.load.image('moon', '/assets/Level1/moon.png');
+        this.load.image('red-bullet', '/assets/Bullets/redBullet.png');
     }
 
     private loadSprites() {
