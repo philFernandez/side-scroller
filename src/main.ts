@@ -1,4 +1,4 @@
-import { CANVAS, Game, GameObjects, Input, Physics, Scene, Sound, Types } from 'phaser';
+import { Game, GameObjects, Input, Physics, Scene, Sound, Types, WEBGL } from 'phaser';
 import './style.css';
 
 const canvas = document.querySelector('canvas#game') as HTMLCanvasElement;
@@ -20,7 +20,6 @@ class GameScene extends Scene {
     private footsteps: Sound.WebAudioSound | undefined;
     private runsteps: Sound.WebAudioSound | undefined;
     private greenSlimes: Physics.Arcade.Group | undefined;
-    private ticker = 0;
 
     constructor() {
         super('scene-game');
@@ -99,7 +98,7 @@ class GameScene extends Scene {
     }
 
     boom() {
-        console.log('BOOM!!');
+        // this.physics.pause();
     }
 
     update() {
@@ -142,18 +141,6 @@ class GameScene extends Scene {
     }
 
     private greenSlimeAIMove() {
-        this.ticker = (this.ticker + 1) % 100;
-        let deltaX = 0;
-        switch (this.ticker) {
-            case 1:
-                deltaX = Math.random() * 10;
-                break;
-            case 25:
-                deltaX = -1 * Math.random() * 10;
-                break;
-            default:
-                break;
-        }
         for (const greenSlime of this.greenSlimes!.getChildren()) {
             if (!greenSlime.active) {
                 continue;
@@ -311,7 +298,7 @@ class GameScene extends Scene {
 
 
 const config = {
-    type: CANVAS,
+    type: WEBGL,
     width: document.querySelector('div.container')?.clientWidth,
     height: document.querySelector('div.container')?.clientHeight,
     canvas,
@@ -319,7 +306,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: worldGravity },
-            debug: true
+            debug: false
         }
     },
     scene: [
