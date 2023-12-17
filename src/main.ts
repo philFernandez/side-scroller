@@ -20,6 +20,8 @@ class GameScene extends Scene {
     private footsteps: Sound.WebAudioSound | undefined;
     private runsteps: Sound.WebAudioSound | undefined;
     private greenSlimes: Physics.Arcade.Group | undefined;
+    private collisionHappening = false;
+    private gameOver = false;
 
     constructor() {
         super('scene-game');
@@ -102,12 +104,21 @@ class GameScene extends Scene {
         // this.physics.pause();
         // this.player?.anims.stop();
         this.player?.setTint(0xff0000);
+        this.collisionHappening = true;
     }
 
 
     update() {
-        this.handleMovementKeys();
-        this.greenSlimeAIMove();
+        if (!this.collisionHappening) {
+            this.handleMovementKeys();
+            this.greenSlimeAIMove();
+        } else if (this.collisionHappening && !this.gameOver) {
+            this.gameOver = true;
+            this.player?.anims.play('die', true);
+            this.player?.setVelocity(0, 800);
+            this.footsteps?.stop();
+            this.runsteps?.stop();
+        }
     }
 
 
@@ -151,7 +162,7 @@ class GameScene extends Scene {
             }
             const typedSlime = greenSlime as Physics.Arcade.Sprite;
             const angle = Phaser.Math.Angle.Between(typedSlime.x, typedSlime.y, this.player!.x, this.player!.y);
-            const speed = 100;
+            const speed = 400;
             typedSlime.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
         }
     }
