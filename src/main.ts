@@ -161,8 +161,10 @@ class GameScene extends Scene {
                 continue;
             }
             const typedSlime = greenSlime as Physics.Arcade.Sprite;
-            const angle = Phaser.Math.Angle.Between(typedSlime.x, typedSlime.y, this.player!.x, this.player!.y);
-            const speed = 400;
+            let angle = Phaser.Math.Angle.Between(typedSlime.x, typedSlime.y, this.player!.x, this.player!.y);
+            const speed = 300;
+            const randomness = 1;
+            angle += Phaser.Math.FloatBetween(-randomness, randomness);
             typedSlime.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
         }
     }
