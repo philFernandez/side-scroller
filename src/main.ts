@@ -89,7 +89,7 @@ class GameScene extends Scene {
         // Physics
         this.physics.add.collider(this.player!, this.platforms!);
         this.physics.add.collider(this.greenSlimes!, this.platforms!);
-        this.physics.add.overlap(this.player!, this.greenSlimes!, this.boom);
+        this.physics.add.overlap(this.player!, this.greenSlimes!, this.slimePlayerCollision, undefined, this);
         this.physics.world.bounds.setTo(0, 0, this.worldWidth, height);
 
         // Camera 
@@ -97,9 +97,13 @@ class GameScene extends Scene {
         this.cameras.main.startFollow(this.player!);
     }
 
-    boom() {
+
+    slimePlayerCollision() {
         // this.physics.pause();
+        // this.player?.anims.stop();
+        this.player?.setTint(0xff0000);
     }
+
 
     update() {
         this.handleMovementKeys();
@@ -252,6 +256,11 @@ class GameScene extends Scene {
             frames: this.anims.generateFrameNumbers('player-jump', { start: 0, end: 8 }),
             frameRate: 20
         });
+        this.anims.create({
+            key: 'die',
+            frames: this.anims.generateFrameNumbers('player-dead', { start: 0, end: 3 }),
+            frameRate: 20
+        });
     }
 
     private loadImages() {
@@ -280,6 +289,10 @@ class GameScene extends Scene {
             frameHeight: 128,
         });
         this.load.spritesheet('player-jump', '/assets/Raider_1/Jump.png', {
+            frameWidth: 128,
+            frameHeight: 128
+        });
+        this.load.spritesheet('player-dead', '/assets/Raider_1/Dead.png', {
             frameWidth: 128,
             frameHeight: 128
         });
