@@ -1,4 +1,4 @@
-import { Game, GameObjects, Input, Physics, Scene, Sound, Types, WEBGL } from 'phaser';
+import { Animations, Game, GameObjects, Input, Physics, Scene, Sound, Types, WEBGL } from 'phaser';
 import './style.css';
 
 const canvas = document.querySelector('canvas#game') as HTMLCanvasElement;
@@ -24,6 +24,7 @@ class GameScene extends Scene {
     private shootKey: Input.Keyboard.Key | undefined;
     private collisionHappening = false;
     private gameOver = false;
+    private isShooting = false;
     private slimeDirectionMap: Map<Phaser.Physics.Arcade.Sprite, { nextDirectionChange: number, targetAngle: number; }> = new Map();
     private playerDirection: Direction = Direction.Right;
 
@@ -122,11 +123,26 @@ class GameScene extends Scene {
             bullet.setActive(true);
             bullet.setVisible(true);
 
+            this.stopPlayer();
+            // Set isShooting flag so update method will stop playing other animations
+            this.isShooting = true;
+            // Play shoot animation, and once its played through unset isShooting flag
+            this.player?.anims.play('shoot');
+            this.player?.once(Animations.Events.ANIMATION_COMPLETE, () => {
+                this.isShooting = false;
+            }, this);
+
             // Destroy each bullet 3/4 seconds after it's creation
             this.time.delayedCall(750, () => {
                 bullet.destroy();
             }, undefined, this);
         }
+    }
+
+    private stopPlayer() {
+        this.player?.setVelocity(0, 150);
+        this.footsteps?.stop();
+        this.runsteps?.stop();
     }
 
     private slimePlayerCollision() {
@@ -135,7 +151,7 @@ class GameScene extends Scene {
     }
 
     update() {
-        if (!this.collisionHappening) {
+        if (!this.collisionHappening && !this.isShooting) {
             this.handleMovementKeys();
             this.greenSlimeMove();
         } else if (this.collisionHappening && !this.gameOver) {
@@ -349,6 +365,12 @@ class GameScene extends Scene {
             frames: this.anims.generateFrameNumbers('player-dead', { start: 0, end: 3 }),
             frameRate: 20
         });
+        this.anims.create({
+            key: 'shoot',
+            frames: this.anims.generateFrameNumbers('player-shoot', { start: 0, end: 11 }),
+            frameRate: 30,
+            repeat: 0
+        });
     }
 
     private loadImages() {
@@ -382,6 +404,10 @@ class GameScene extends Scene {
             frameHeight: 128
         });
         this.load.spritesheet('player-dead', '/assets/Raider_1/Dead.png', {
+            frameWidth: 128,
+            frameHeight: 128
+        });
+        this.load.spritesheet('player-shoot', '/assets/Raider_1/Shot.png', {
             frameWidth: 128,
             frameHeight: 128
         });
