@@ -26,6 +26,7 @@ class GameScene extends Scene {
     private collisionHappening = false;
     private gameOver = false;
     private isShooting = false;
+    private slimeSpeed = 100;
     private slimeDirectionMap: Map<Phaser.Physics.Arcade.Sprite, { nextDirectionChange: number, targetAngle: number; }> = new Map();
     private playerDirection: Direction = Direction.Right;
 
@@ -116,9 +117,9 @@ class GameScene extends Scene {
         bullet.setActive(false);
         bullet.setVisible(false);
         slime.setTint(0xff0000);
-        slime.setVelocity(1000, -1000);
+        slime.setVelocity(0, -3000);
         slime.setActive(false);
-        // slime.setVisible(false);
+        this.slimeSpeed += 100;
     }
 
     private shootBullet() {
@@ -167,13 +168,15 @@ class GameScene extends Scene {
     }
 
     private slimePlayerCollision() {
-        this.player?.setTint(0x00ff00);
+        this.player?.setTint(0xff0000);
         this.collisionHappening = true;
     }
 
     update() {
-        if (!this.collisionHappening && !this.isShooting) {
-            this.handleMovementKeys();
+        if (!this.collisionHappening) {
+            if (!this.isShooting) {
+                this.handleMovementKeys();
+            }
             this.greenSlimeMove();
         } else if (this.collisionHappening && !this.gameOver) {
             this.gameOver = true;
@@ -225,10 +228,9 @@ class GameScene extends Scene {
             }
             const typedSlime = greenSlime as Physics.Arcade.Sprite;
             let angle = Phaser.Math.Angle.Between(typedSlime.x, typedSlime.y, this.player!.x, this.player!.y);
-            const speed = 300;
             const randomness = 0.2;
             angle += Phaser.Math.FloatBetween(-randomness, randomness);
-            typedSlime.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
+            typedSlime.setVelocity(Math.cos(angle) * this.slimeSpeed, Math.sin(angle) * this.slimeSpeed);
         }
     }
 
@@ -266,8 +268,7 @@ class GameScene extends Scene {
             const currentAngle = Math.atan2(typedSlime.body?.velocity.y!, typedSlime.body?.velocity.x!);
             let angle = Phaser.Math.Angle.RotateTo(currentAngle, slimeData.targetAngle, 0.02); // adjust this for turn speed
 
-            const speed = 400;
-            typedSlime.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
+            typedSlime.setVelocity(Math.cos(angle) * this.slimeSpeed, Math.sin(angle) * this.slimeSpeed);
         }
     }
 
