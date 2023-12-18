@@ -23,6 +23,7 @@ class GameScene extends Scene {
     private redBullets: Physics.Arcade.Group | undefined;
     private shootKey: Input.Keyboard.Key | undefined;
     private collisionHappening = false;
+    private lastShot = 0;
     private gameOver = false;
     private slimeDirectionMap: Map<Phaser.Physics.Arcade.Sprite, { nextDirectionChange: number, targetAngle: number; }> = new Map();
 
@@ -88,6 +89,7 @@ class GameScene extends Scene {
         }) as Types.Input.Keyboard.CursorKeys;
 
         this.shootKey = this.input.keyboard?.addKey(Input.Keyboard.KeyCodes.J);
+        this.shootKey?.addListener('down', this.shootBullet, this);
 
         // Music/Sounds
         this.level1BgMusic = this.sound.add('level1BgMusic', { loop: true, volume: 0.09 }) as Sound.WebAudioSound;
@@ -101,34 +103,30 @@ class GameScene extends Scene {
         this.physics.add.overlap(this.player!, this.greenSlimes!, this.slimePlayerCollision, undefined, this);
         this.physics.world.bounds.setTo(0, 0, this.worldWidth, height);
 
+
         // Camera 
         this.cameras.main.setBounds(0, 0, this.worldWidth, height);
         this.cameras.main.startFollow(this.player!);
     }
 
     private shootBullet() {
-        if (this.shootKey?.isDown) {
-            const bullet: Physics.Arcade.Sprite = this.redBullets?.get(this.player?.x, this.player?.y);
+        const bullet: Physics.Arcade.Sprite = this.redBullets?.get(this.player?.x, this.player?.y);
+        if (bullet) {
             bullet.setScale(4, 2);
-            if (bullet) {
-                bullet.setActive(true);
-                bullet.setVisible(true);
-                bullet.setVelocityX(3300);
-            }
+            bullet.setActive(true);
+            bullet.setVisible(true);
+            bullet.setVelocityX(1800);
         }
     }
-
 
     private slimePlayerCollision() {
         // this.player?.setTint(0x00ff00);
         // this.collisionHappening = true;
     }
 
-
     update() {
         if (!this.collisionHappening) {
             this.handleMovementKeys();
-            this.shootBullet();
             this.greenSlimeMove();
         } else if (this.collisionHappening && !this.gameOver) {
             this.gameOver = true;
@@ -278,7 +276,7 @@ class GameScene extends Scene {
     private createBullets() {
         this.redBullets = this.physics.add.group({
             defaultKey: 'red-bullet',
-            maxSize: 1000, // means max of 10 bullets
+            // maxSize: 10, // means max of 10 bullets
         });
     }
 
