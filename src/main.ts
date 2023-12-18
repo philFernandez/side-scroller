@@ -104,6 +104,7 @@ class GameScene extends Scene {
         this.physics.add.collider(this.player!, this.platforms!);
         this.physics.add.collider(this.greenSlimes!, this.platforms!);
         this.physics.add.overlap(this.player!, this.greenSlimes!, this.slimePlayerCollision, undefined, this);
+        this.physics.add.collider(this.redBullets!, this.greenSlimes!, this.bulletSlimeCollision, undefined, this);
         this.physics.world.bounds.setTo(0, 0, this.worldWidth, height);
 
         // Camera 
@@ -111,7 +112,19 @@ class GameScene extends Scene {
         this.cameras.main.startFollow(this.player!);
     }
 
+    private bulletSlimeCollision(bullet: any, slime: any) {
+        bullet.setActive(false);
+        bullet.setVisible(false);
+        slime.setTint(0xff0000);
+        slime.setVelocity(1000, -1000);
+        slime.setActive(false);
+        // slime.setVisible(false);
+    }
+
     private shootBullet() {
+        if (this.gameOver) {
+            return;
+        }
         // const bullet: Physics.Arcade.Sprite = this.redBullets?.get(this.player?.x, this.player?.y! + 50);
         let bullet: Physics.Arcade.Sprite = this.redBullets?.get();
         const bulletVelocity = 2000;
@@ -324,8 +337,6 @@ class GameScene extends Scene {
             repeat: 5,
             gravityY: -worldGravity,
             setXY: { x: 10, y: 0, stepX: 500, stepY: 0 },
-            active: false,
-            visible: false
         });
 
 
