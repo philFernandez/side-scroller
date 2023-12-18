@@ -19,6 +19,7 @@ class GameScene extends Scene {
     private level1BgMusic: Sound.WebAudioSound | undefined;
     private footsteps: Sound.WebAudioSound | undefined;
     private runsteps: Sound.WebAudioSound | undefined;
+    private gunShoot: Sound.WebAudioSound | undefined;
     private greenSlimes: Physics.Arcade.Group | undefined;
     private redBullets: Physics.Arcade.Group | undefined;
     private shootKey: Input.Keyboard.Key | undefined;
@@ -97,6 +98,7 @@ class GameScene extends Scene {
         this.level1BgMusic.play();
         this.footsteps = this.sound.add('footsteps', { loop: true }) as Sound.WebAudioSound;
         this.runsteps = this.sound.add('footsteps', { rate: 2, loop: true }) as Sound.WebAudioSound;
+        this.gunShoot = this.sound.add('gunshot', { loop: false }) as Sound.WebAudioSound;
 
         // Physics
         this.physics.add.collider(this.player!, this.platforms!);
@@ -112,13 +114,14 @@ class GameScene extends Scene {
     private shootBullet() {
         // const bullet: Physics.Arcade.Sprite = this.redBullets?.get(this.player?.x, this.player?.y! + 50);
         let bullet: Physics.Arcade.Sprite = this.redBullets?.get();
+        const bulletVelocity = 2000;
         if (bullet) {
             bullet.setScale(4, 2);
             bullet.setPosition(this.player?.x, this.player?.y! + 50);
             if (this.playerDirection == Direction.Right) {
-                bullet.setVelocityX(1500);
+                bullet.setVelocityX(bulletVelocity);
             } else {
-                bullet.setVelocityX(-1500);
+                bullet.setVelocityX(-bulletVelocity);
             }
             bullet.setActive(true);
             bullet.setVisible(true);
@@ -126,6 +129,7 @@ class GameScene extends Scene {
             this.stopPlayer();
             // Set isShooting flag so update method will stop playing other animations
             this.isShooting = true;
+            this.gunShoot?.play();
             // Play shoot animation, and once its played through unset isShooting flag
             this.player?.anims.play('shoot');
             this.player?.once(Animations.Events.ANIMATION_COMPLETE, () => {
@@ -425,6 +429,7 @@ class GameScene extends Scene {
     private loadAudio() {
         this.load.audio('level1BgMusic', '/assets/Sound/bg-Stylz.mp3');
         this.load.audio('footsteps', '/assets/Sound/walking.wav');
+        this.load.audio('gunshot', '/assets/Sound/Gunshot.mp3');
     }
 }
 
