@@ -25,6 +25,7 @@ class GameScene extends Scene {
     private collisionHappening = false;
     private gameOver = false;
     private slimeDirectionMap: Map<Phaser.Physics.Arcade.Sprite, { nextDirectionChange: number, targetAngle: number; }> = new Map();
+    private playerDirection: Direction = Direction.Right;
 
 
     constructor() {
@@ -113,7 +114,11 @@ class GameScene extends Scene {
         if (bullet) {
             bullet.setScale(4, 2);
             bullet.setPosition(this.player?.x, this.player?.y! + 50);
-            bullet.setVelocityX(1500);
+            if (this.playerDirection == Direction.Right) {
+                bullet.setVelocityX(1500);
+            } else {
+                bullet.setVelocityX(-1500);
+            }
             bullet.setActive(true);
             bullet.setVisible(true);
 
@@ -232,6 +237,8 @@ class GameScene extends Scene {
 
     private playerMove(direction: Direction) {
         let walkSpeed = 200;
+        // Set playerDirection so we know which direction to shoot bullets
+        this.playerDirection = direction;
         this.player?.setFlipX(direction != Direction.Right);
         if (this.cursors?.shift.isUp) { // WALK
             // Since we're walking turn off the running footsteps if they're on
