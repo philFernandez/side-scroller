@@ -140,14 +140,18 @@ class GameScene extends Scene {
     }
 
     private stopPlayer() {
-        this.player?.setVelocity(0, 150);
+        // Let player keep moving if in air, otherwise stop velocity
+        if (this.player?.body.touching.down) {
+            this.player?.setVelocity(0);
+        }
+        // Stop walk run sounds
         this.footsteps?.stop();
         this.runsteps?.stop();
     }
 
     private slimePlayerCollision() {
-        // this.player?.setTint(0x00ff00);
-        // this.collisionHappening = true;
+        this.player?.setTint(0x00ff00);
+        this.collisionHappening = true;
     }
 
     update() {
