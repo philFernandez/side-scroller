@@ -6,7 +6,9 @@ const worldGravity = 300;
 
 enum Direction {
     Right,
-    Left
+    Left,
+    Up,
+    Down
 }
 
 class GameScene extends Scene {
@@ -119,66 +121,61 @@ class GameScene extends Scene {
         slime.setTint(0xff0000);
         slime.setVelocity(0, -3000);
         slime.setActive(false);
-        this.slimeSpeed += 100;
+        this.slimeSpeed += 50;
     }
 
     private shootBullet() {
         if (this.gameOver) {
             return;
         }
-        // const bullet: Physics.Arcade.Sprite = this.redBullets?.get(this.player?.x, this.player?.y! + 50);
-        let bulletUp: Physics.Arcade.Sprite = this.redBullets?.get();
-        let bullet: Physics.Arcade.Sprite = this.redBullets?.get();
-        let bulletDown: Physics.Arcade.Sprite = this.redBullets?.get();
+        // Three bullets for every shot
+        // Up bullet
+        this.activateBullet(Direction.Up);
+        // Straight bullet
+        this.activateBullet(undefined);
+        // Down bullet
+        this.activateBullet(Direction.Down);
+        // Make player stop when shooting (unless he's in the air jumping)
+        this.stopPlayer();
+        // Set isShooting flag so update method will stop playing other animations
+        this.isShooting = true;
+        // Play gunshot should
+        this.gunShoot?.play();
+        // Play shoot animation, and once its played through unset isShooting flag
+        this.player?.anims.play('shoot');
+        this.player?.once(Animations.Events.ANIMATION_COMPLETE, () => {
+            this.isShooting = false;
+        }, this);
+    }
+
+    // Activates a bullet in either then up, down, or straight (undefined) directions
+    private activateBullet(bulletDirection: Direction.Up | Direction.Down | undefined) {
         const bulletVelocity = 2000;
+        let bullet: Physics.Arcade.Sprite = this.redBullets?.get();
         if (bullet) {
             bullet.setScale(4, 2);
             bullet.setPosition(this.player?.x, this.player?.y! + 50);
-            bulletUp.setScale(4, 2);
-            bulletUp.setPosition(this.player?.x, this.player?.y! + 50);
-            bulletDown.setScale(4, 2);
-            bulletDown.setPosition(this.player?.x, this.player?.y! + 50);
+
+            // Make bullet fly same direction player is facing
             if (this.playerDirection == Direction.Right) {
                 bullet.setVelocityX(bulletVelocity);
-                bulletUp.setVelocityX(bulletVelocity);
-                bulletDown.setVelocityX(bulletVelocity);
             } else {
                 bullet.setVelocityX(-bulletVelocity);
-                bulletUp.setVelocityX(-bulletVelocity);
-                bulletDown.setVelocityX(-bulletVelocity);
             }
-            bulletUp.setVelocityY(-bulletVelocity / 2);
-            bulletDown.setVelocityY(bulletVelocity / 2);
+
+            // Set y velocity based on bullet direction
+            if (bulletDirection === Direction.Up) {
+                bullet.setVelocityY(-bulletVelocity / 2);
+            } else if (bulletDirection === Direction.Down) {
+                bullet.setVelocityY(bulletVelocity / 2);
+            }
             bullet.setActive(true);
             bullet.setVisible(true);
-            bulletUp.setActive(true);
-            bulletUp.setVisible(true);
-            bulletDown.setActive(true);
-            bulletDown.setVisible(true);
-
-            this.stopPlayer();
-            // Set isShooting flag so update method will stop playing other animations
-            this.isShooting = true;
-            this.gunShoot?.play();
-            // Play shoot animation, and once its played through unset isShooting flag
-            this.player?.anims.play('shoot');
-            this.player?.once(Animations.Events.ANIMATION_COMPLETE, () => {
-                this.isShooting = false;
-            }, this);
-
             // Destroy each bullet 3/4 seconds after it's creation
             this.time.delayedCall(750, () => {
                 bullet.destroy();
-                bulletUp.destroy();
-                bulletDown.destroy();
             }, undefined, this);
         }
-    }
-
-    private activateBullet() {
-        let bullet: Physics.Arcade.Sprite = this.redBullets?.get();
-        bullet.setScale(4, 2);
-        bullet.setPosition(this.player?.x, this.player?.y! + 50);
     }
 
     private stopPlayer() {
@@ -350,7 +347,6 @@ class GameScene extends Scene {
     private createBullets() {
         this.redBullets = this.physics.add.group({
             defaultKey: 'red-bullet',
-            // maxSize: 10, // means max of 10 bullets
         });
     }
 
