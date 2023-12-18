@@ -23,7 +23,6 @@ class GameScene extends Scene {
     private redBullets: Physics.Arcade.Group | undefined;
     private shootKey: Input.Keyboard.Key | undefined;
     private collisionHappening = false;
-    private lastShot = 0;
     private gameOver = false;
     private slimeDirectionMap: Map<Phaser.Physics.Arcade.Sprite, { nextDirectionChange: number, targetAngle: number; }> = new Map();
 
@@ -103,19 +102,25 @@ class GameScene extends Scene {
         this.physics.add.overlap(this.player!, this.greenSlimes!, this.slimePlayerCollision, undefined, this);
         this.physics.world.bounds.setTo(0, 0, this.worldWidth, height);
 
-
         // Camera 
         this.cameras.main.setBounds(0, 0, this.worldWidth, height);
         this.cameras.main.startFollow(this.player!);
     }
 
     private shootBullet() {
-        const bullet: Physics.Arcade.Sprite = this.redBullets?.get(this.player?.x, this.player?.y);
+        // const bullet: Physics.Arcade.Sprite = this.redBullets?.get(this.player?.x, this.player?.y! + 50);
+        let bullet: Physics.Arcade.Sprite = this.redBullets?.get();
         if (bullet) {
             bullet.setScale(4, 2);
+            bullet.setPosition(this.player?.x, this.player?.y! + 50);
+            bullet.setVelocityX(1500);
             bullet.setActive(true);
             bullet.setVisible(true);
-            bullet.setVelocityX(1800);
+
+            // Destroy each bullet 3/4 seconds after it's creation
+            this.time.delayedCall(750, () => {
+                bullet.destroy();
+            }, undefined, this);
         }
     }
 
@@ -288,13 +293,14 @@ class GameScene extends Scene {
             repeat: 5,
             gravityY: -worldGravity,
             setXY: { x: 10, y: 0, stepX: 500, stepY: 0 },
+            active: false,
+            visible: false
         });
 
 
         // Make hitboxes smaller
         this.greenSlimes?.children.iterateLocal('setBodySize', 50, 50);
         this.greenSlimes?.children.iterateLocal('setOffset', 40, 85);
-
     }
 
     private createPlayer() {
