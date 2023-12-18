@@ -127,18 +127,34 @@ class GameScene extends Scene {
             return;
         }
         // const bullet: Physics.Arcade.Sprite = this.redBullets?.get(this.player?.x, this.player?.y! + 50);
+        let bulletUp: Physics.Arcade.Sprite = this.redBullets?.get();
         let bullet: Physics.Arcade.Sprite = this.redBullets?.get();
+        let bulletDown: Physics.Arcade.Sprite = this.redBullets?.get();
         const bulletVelocity = 2000;
         if (bullet) {
             bullet.setScale(4, 2);
             bullet.setPosition(this.player?.x, this.player?.y! + 50);
+            bulletUp.setScale(4, 2);
+            bulletUp.setPosition(this.player?.x, this.player?.y! + 50);
+            bulletDown.setScale(4, 2);
+            bulletDown.setPosition(this.player?.x, this.player?.y! + 50);
             if (this.playerDirection == Direction.Right) {
                 bullet.setVelocityX(bulletVelocity);
+                bulletUp.setVelocityX(bulletVelocity);
+                bulletDown.setVelocityX(bulletVelocity);
             } else {
                 bullet.setVelocityX(-bulletVelocity);
+                bulletUp.setVelocityX(-bulletVelocity);
+                bulletDown.setVelocityX(-bulletVelocity);
             }
+            bulletUp.setVelocityY(-bulletVelocity / 2);
+            bulletDown.setVelocityY(bulletVelocity / 2);
             bullet.setActive(true);
             bullet.setVisible(true);
+            bulletUp.setActive(true);
+            bulletUp.setVisible(true);
+            bulletDown.setActive(true);
+            bulletDown.setVisible(true);
 
             this.stopPlayer();
             // Set isShooting flag so update method will stop playing other animations
@@ -153,8 +169,16 @@ class GameScene extends Scene {
             // Destroy each bullet 3/4 seconds after it's creation
             this.time.delayedCall(750, () => {
                 bullet.destroy();
+                bulletUp.destroy();
+                bulletDown.destroy();
             }, undefined, this);
         }
+    }
+
+    private activateBullet() {
+        let bullet: Physics.Arcade.Sprite = this.redBullets?.get();
+        bullet.setScale(4, 2);
+        bullet.setPosition(this.player?.x, this.player?.y! + 50);
     }
 
     private stopPlayer() {
